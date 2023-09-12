@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .max-container {
+        max-width: 1550px;
+        margin: 0 auto;
+        padding: 0 3rem;
+    }
+
+    .footer-title {
+        color: black;
+        font-size: 20px;
+        font-family: 'fredoka', sans-serif;
+    }
+
+    .footer-link {
+        @apply font-nunito text-base text-[#2B2B2B] font-[400px];
+    }
+}

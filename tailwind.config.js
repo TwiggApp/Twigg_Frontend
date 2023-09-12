@@ -5,7 +5,21 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#2B6C57",
+        "primary-dark": "#00412C",
+        "gray-bg": "#FCFCFC;"
+      },
+      fontFamily: {
+        'fredoka': ['fredoka', 'sans-serif'],
+        'nunito': ['nunito', 'sans-serif'],
+        'sans': ['fredoka', 'sans-serif']
+      },
+      fontWeight: {
+        bold: '600'
+      }
+    },
   },
   plugins: [],
 }
