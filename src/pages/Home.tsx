@@ -11,6 +11,7 @@ import BenefitCard2 from "../assets/benefits/benefit-card2.svg";
 import BenefitCard3 from "../assets/benefits/benefit-card3.svg";
 import Woman from "../assets/woman.svg";
 import Circle from "../assets/circle.svg";
+import { useNavigate } from "react-router-dom";
 
 const benefits = [
   {
@@ -31,27 +32,28 @@ const benefits = [
 ];
 
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-gray-bg">
       <div className="max-container">
         <Navbar />
 
         <section className="flex min-h-[500px] items-start justify-between pt-12 max-lg:flex-col">
-          <div className="w-[576px]">
-            <h1 className="text-[55px] font-bold">
+          <div className="w-[576px] max-md:w-auto">
+            <h1 className="text-[55px] font-bold max-md:text-[40px]">
               <span className="text-primary">Goodbye</span> Paper Menus,
               <br />
               <span className="text-primary">Hello</span> QR Codes
             </h1>
 
             <p className="text-base leading-6 text-gray-700 mt-4">
-              Ditch the hassle of physical menus that are costly to print, prone to wear and tear,
-              and a breeding ground for germs. With our QR Code Menu Generator, your restaurant can
-              offer a safer, more convenient, and eco-friendly dining experience.
+              Eliminate physical menus' costs, wear and tear, and hygiene concerns with our QR Code
+              Menu Generator.
             </p>
 
             <div className="flex gap-2 mt-8">
-              <Button>Get Started</Button>
+              <Button onClick={() => navigate("/register")}>Get Started</Button>
               <Button inverted>Learn More</Button>
             </div>
           </div>
@@ -68,9 +70,9 @@ export default function Home() {
             Enhance your restaurant's potential with modern solutions
           </h2>
 
-          <div className="mt-16 flex gap-12">
+          <div className="mt-16 flex gap-12 max-md:flex-col">
             {benefits.map((benefit) => (
-              <div className="flex flex-col justify-center text-center items-center gap-4 min-h-[240px] w-[240px] rounded-md bg-white p-4 shadow-4.58209 shadow-18.32836 shadow-54.98507 shadow-0 rgba-178-178-178-15">
+              <div className="flex flex-col justify-center text-center items-center gap-4 min-h-[240px] w-[240px] max-md:w-[280px] max-md:h-[280px] rounded-md bg-white p-4 shadow-4.58209 shadow-18.32836 shadow-54.98507 shadow-0 rgba-178-178-178-15">
                 <img src={benefit.image} alt="money" className="w-[65px] h-[65px]" />
                 <h3 className="text-[#2B2B2B] text-[24px] font-normal">{benefit.title}</h3>
                 <p className="text-[#777] text-sm">{benefit.content}</p>

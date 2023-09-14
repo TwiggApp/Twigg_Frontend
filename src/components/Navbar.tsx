@@ -8,7 +8,7 @@ export default function Navbar() {
         <div className="flex items-center">
           <img src={Logo} alt="twigg-logo" />
 
-          <ul className="flex items-center ml-10 gap-8">
+          <ul className="flex items-center ml-10 gap-8 max-md:hidden">
             <li className="font-nunito">
               <NavLink
                 to="/"
@@ -44,7 +44,7 @@ export default function Navbar() {
           </ul>
         </div>
 
-        <div className="flex gap-6 items-center">
+        <div className="flex gap-6 items-center max-md:hidden">
           <p>
             <Link to="/login">Log in</Link>
           </p>

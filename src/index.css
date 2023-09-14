@@ -16,6 +16,12 @@
         padding: 0 3rem;
     }
 
+    @media (max-width: 768px) {
+        .max-container {
+            padding: 0 1.5rem;
+        }
+    }
+
     .footer-title {
         color: black;
         font-size: 20px;
