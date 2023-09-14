@@ -4,7 +4,7 @@ import Logo from "../assets/logo.svg";
 export default function Footer() {
   return (
     <footer className="py-16 max-container">
-      <div className="flex flex-row items-start justify-between py-10 max-md:flex-col">
+      <div className="flex flex-row items-start justify-between py-10 max-md:flex-col max-md:gap-6">
         <div>
           <img src={Logo} alt="twigg logo" />
           <p className="font-nunito mt-4 w-[280px] text-[#2B2B2B]">

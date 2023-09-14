@@ -66,7 +66,7 @@ export default function Home() {
         </section>
 
         <section className="pt-32 flex flex-col items-center">
-          <h2 className="text-primary max-w-[615px] text-center text-[36px] font-fredoka leading-10 font-bold">
+          <h2 className="text-primary max-w-[615px] text-center text-[36px] font-fredoka leading-10 font-bold max-md:text-[26px]">
             Enhance your restaurant's potential with modern solutions
           </h2>
 
@@ -82,7 +82,7 @@ export default function Home() {
         </section>
 
         <div className="pt-32 flex flex-col items-center w-[100%]">
-          <h2 className="text-primary max-w-[615px] text-center text-[36px] font-fredoka leading-10 font-bold">
+          <h2 className="text-primary max-w-[615px] text-center text-[36px] font-fredoka leading-10 font-bold max-md:text-[26px]">
             How twigg works
           </h2>
         </div>
@@ -107,20 +107,24 @@ export default function Home() {
       </div>
 
       <section className="bg-primary mt-8 relative overflow-hidden">
-        <div className="flex flex-row max-container h-[424px] items-center justify-between overflow-hidden z-[2]">
-          <div className="w-[602px] z-[2]">
-            <h2 className="text-[48px] font-bold leading-[64.8px] text-white">
+        <div className="flex flex-row max-container h-[424px] max-md:h-[496px] items-center justify-between overflow-hidden z-[2] max-md:flex-col max-md:items-center max-md:justify-center">
+          <div className="w-[602px] z-[2] max-md:w-auto max-md:text-center">
+            <h2 className="text-[48px] font-bold leading-[64.8px] text-white max-md:text-[26px] max-md:leading-[35.1px]">
               Ready to modernize your restaurant's menu?
             </h2>
 
-            <div className="w-[160px] mt-8 z-50">
+            <div className="w-[160px] mt-8 z-50 max-md:mx-auto">
               <Button bgColor="bg-white" textColor="text-primary">
                 Get Started
               </Button>
             </div>
           </div>
           <div className="z-50">
-            <img src={Woman} alt="woman-image" className="translate-y-6 mr-12 z-[2]" />
+            <img
+              src={Woman}
+              alt="woman-image"
+              className="translate-y-6 mr-12 z-[2] max-md:w-[238px] max-md:h-[238px] max-md:translate-y-14"
+            />
           </div>
         </div>
 
@@ -133,13 +137,13 @@ export default function Home() {
         <img
           src={Circle}
           alt="circle"
-          className="w-[342px] h-[342px] absolute -bottom-16 right-0 z-[1]"
+          className="w-[342px] h-[342px] absolute -bottom-16 right-0 z-[1] max-md:w-[196px] max-md:h-[196px]"
         />
 
         <img
           src={Circle}
           alt="circle"
-          className="w-[214px] h-[214px] absolute -top-6 -right-16 z-[1]"
+          className="w-[214px] h-[214px] absolute -top-6 -right-16 z-[1] max-md:w-[138px] max-md:h-[138px]"
         />
       </section>
 
