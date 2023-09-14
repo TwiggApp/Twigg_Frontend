@@ -9,7 +9,7 @@ export default {
       colors: {
         primary: "#2B6C57",
         "primary-dark": "#00412C",
-        "gray-bg": "#FCFCFC;"
+        "gray-bg": "#FCFCFC"
       },
       fontFamily: {
         'fredoka': ['fredoka', 'sans-serif'],

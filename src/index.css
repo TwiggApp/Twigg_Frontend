@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    input::placeholder {
+        color: #BBB;
+        font-size: 16px;
+    }   
+}
+
 @layer components {
     .max-container {
         max-width: 1550px;

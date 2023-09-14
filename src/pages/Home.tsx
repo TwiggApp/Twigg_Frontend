@@ -1,5 +1,7 @@
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
+import Section from "../components/Section";
+import Footer from "../components/Footer";
 import HeroImg from "../assets/hero.png";
 import Edit from "../assets/edit.svg";
 import Hygiene from "../assets/hygiene.svg";
@@ -9,8 +11,6 @@ import BenefitCard2 from "../assets/benefits/benefit-card2.svg";
 import BenefitCard3 from "../assets/benefits/benefit-card3.svg";
 import Woman from "../assets/woman.svg";
 import Circle from "../assets/circle.svg";
-import Section from "../components/Section";
-import Footer from "../components/Footer";
 
 const benefits = [
   {
