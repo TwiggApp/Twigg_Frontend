@@ -34,6 +34,10 @@ const benefits = [
 export default function Home() {
   const navigate = useNavigate();
 
+  const goToRegisterPage = () => {
+    navigate("/register");
+  };
+
   return (
     <div className="bg-gray-bg">
       <div className="max-container">
@@ -53,7 +57,7 @@ export default function Home() {
             </p>
 
             <div className="flex gap-2 mt-8">
-              <Button onClick={() => navigate("/register")}>Get Started</Button>
+              <Button onClick={goToRegisterPage}>Get Started</Button>
               <Button inverted>Learn More</Button>
             </div>
           </div>
@@ -114,7 +118,7 @@ export default function Home() {
             </h2>
 
             <div className="w-[160px] mt-8 z-50 max-md:mx-auto">
-              <Button bgColor="bg-white" textColor="text-primary">
+              <Button bgColor="bg-white" textColor="text-primary" onClick={goToRegisterPage}>
                 Get Started
               </Button>
             </div>
