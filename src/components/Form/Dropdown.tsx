@@ -25,7 +25,7 @@ export default function Dropdown({ placeholder, dropdownItems }: DropdownProps) 
     <div className="relative">
       <div
         tabIndex={0}
-        className="flex flex-row items-center justify-between w-[422px] max-md:w-[100%] px-[10px] py-[14px] border-[1px] border-[#D6D6D6] rounded-md outline-none font-nunito focus:border-primary"
+        className="flex flex-row items-center justify-between w-[422px] max-md:w-[100%] px-[10px] py-[14px] border-[1px] border-[#D6D6D6] rounded-md outline-none font-nunito focus:border-primary cursor-pointer"
         onClick={handleClick}
       >
         {selectedItem ? (

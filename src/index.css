@@ -7,6 +7,10 @@
         color: #BBB;
         font-size: 16px;
     }   
+
+    input[type=file]::-webkit-file-upload-button {
+        @apply bg-[#F0F0F0] text-[#555] border-0 font-nunito p-[10px] rounded-md cursor-pointer;
+    }
 }
 
 @layer components {
