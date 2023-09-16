@@ -73,7 +73,7 @@ export default function Navbar() {
         </div>
 
         {menuVisible && (
-          <div className="fixed top-0 left-0 w-screen h-screen flex flex-col bg-white z-50 px-10 py-4">
+          <div className="fixed top-0 left-0 w-screen min-h-screen overflow-y-auto flex flex-col bg-white z-50 px-10 py-4">
             <div className="flex justify-between items-center mb-12">
               <img src={Logo} alt="twigg-logo" />
               <div onClick={handleCloseMenu}>
