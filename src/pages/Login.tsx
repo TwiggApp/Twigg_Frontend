@@ -11,7 +11,7 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-gray-bg">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gray-bg max-md:bg-white">
       <div className="flex flex-col max-md:items-center justify-center -translate-y-6">
         <img src={Logo} alt="twigg-logo" className="max-md:mt-4 w-[90px]" />
 

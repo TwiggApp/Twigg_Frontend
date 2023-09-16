@@ -9,6 +9,9 @@ import Money from "../assets/money.svg";
 import BenefitCard1 from "../assets/benefits/benefit-card1.svg";
 import BenefitCard2 from "../assets/benefits/benefit-card2.svg";
 import BenefitCard3 from "../assets/benefits/benefit-card3.svg";
+import BenefitCard1Bg from "../assets/benefits/benefit-card1-bg.svg";
+import BenefitCard2Bg from "../assets/benefits/benefit-card2-bg.svg";
+import BenefitCard3Bg from "../assets/benefits/benefit-card3-bg.svg";
 import Woman from "../assets/woman.svg";
 import Circle from "../assets/circle.svg";
 import { useNavigate } from "react-router-dom";
@@ -92,6 +95,7 @@ export default function Home() {
         </div>
         <Section
           image={BenefitCard1}
+          imageBg={BenefitCard1Bg}
           title="Create your menu"
           content="Effortlessly add, edit, or remove dishes, drinks, and daily specials with our user-friendly platform. Maintain full control to showcase your restaurant's unique offerings."
           hasButton
@@ -99,12 +103,14 @@ export default function Home() {
 
         <Section
           image={BenefitCard2}
+          imageBg={BenefitCard2Bg}
           title="Generate QR Codes"
           content="Once your menu is set, our system instantly generates unique QR codes for each menu item. These QR codes are tailored to your restaurant, linking directly to the respective item's details."
         />
 
         <Section
           image={BenefitCard3}
+          imageBg={BenefitCard3Bg}
           title="Print and display"
           content="Choose how you'd like to present your QR codes. Whether it's printed QR codes on tabletops or displayed on digital screens for customers to scan and browse the menu. The choice is yours"
         />

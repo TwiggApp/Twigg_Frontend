@@ -12,11 +12,11 @@ export default function CreateProfile() {
   const { next, prev, step, isFirstStep, isLastStep, currentStepIndex } = useMultiStep(pages);
 
   return (
-    <div className="w-full min-h-screen overflow-y-auto my-4 flex items-center justify-center bg-gray-bg max-md:items-start max-md:mt-12">
+    <div className="w-full min-h-screen overflow-y-auto my-4 flex items-center justify-center bg-gray-bg max-md:items-start max-md:mt-12 max-md:bg-white">
       <div className="flex flex-col justify-center -translate-y-6">
         <img src={Logo} alt="twigg-logo" className="max-md:mt-4 w-[90px] max-md:mx-6" />
 
-        <div className="min-h-[528px] w-[522px] max-md:w-[95vw] py-8 md:px-10 max-md:px-6 bg-white max-md:bg-gray-bg md:shadow-md rounded-md mt-4">
+        <div className="min-h-[528px] w-[522px] max-md:w-[95vw] py-8 md:px-10 max-md:px-6 bg-white md:shadow-md rounded-md mt-4">
           <div className="w-[422px] max-md:w-[100%] mx-auto">
             <h2 className="text-primary text-[26px] text-[500] mb-6">Create your profile</h2>
 

@@ -14,7 +14,7 @@ export default function Register() {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-gray-bg">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gray-bg max-md:bg-white">
       <div className="flex flex-col max-md:items-center justify-center">
         <img src={Logo} alt="twigg-logo" className="max-md:mt-4 w-[90px]" />
 
