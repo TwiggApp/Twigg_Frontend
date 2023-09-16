@@ -4,6 +4,7 @@ import Stepper from "../../components/Stepper";
 import BusinessDetailsForm from "./BusinessDetailsForm";
 import UserDetailsForm from "./UserDetailsForm";
 import SocialsForm from "./SocialsForm";
+import FadeIn from "react-fade-in/lib/FadeIn";
 import { useMultiStep } from "../../hooks/useMultiStep";
 
 export default function CreateProfile() {
@@ -20,9 +21,15 @@ export default function CreateProfile() {
           <div className="w-[422px] max-md:w-[100%] mx-auto">
             <h2 className="text-primary text-[26px] text-[500] mb-6">Create your profile</h2>
 
-            <Stepper pagesLength={pages.length} currrentPageIndex={currentStepIndex} />
+            <FadeIn>
+              <Stepper
+                pagesLength={pages.length}
+                currrentPageIndex={currentStepIndex}
+                pagesText={["Business Details", "Contact Details", "Social Media"]}
+              />
 
-            <div className="mb-6 mt-16">{step}</div>
+              <div className="mb-6 mt-16">{step}</div>
+            </FadeIn>
 
             <div className="mt-10">
               <Button onClick={next} alternateFont="nunito">
