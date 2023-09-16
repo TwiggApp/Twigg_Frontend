@@ -68,10 +68,10 @@ export default function Footer() {
 
           <div className="flex flex-col gap-2 mt-4">
             <p className="footer-link">
-              <Link to="/">Create account</Link>
+              <Link to="/register">Create account</Link>
             </p>
             <p className="footer-link">
-              <Link to="/">Log in</Link>
+              <Link to="/login">Log in</Link>
             </p>
           </div>
         </div>

@@ -1,7 +1,43 @@
+import { useState } from "react";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.svg";
-import { NavLink, Link } from "react-router-dom";
+import Hamburger from "../assets/hamburger.svg";
+import CloseX from "../assets/close-x.svg";
+import Button from "./Button";
+
+const MENU_ITEMS = [
+  {
+    link: "/",
+    text: "Home",
+  },
+  {
+    link: "/benefits",
+    text: "Benefits",
+  },
+  {
+    link: "/how-it-works",
+    text: "How it works",
+  },
+  {
+    link: "/contact",
+    text: "Contact us",
+  },
+];
+
+const MOBILE_MENU_ITEMS = [...MENU_ITEMS, { link: "/login", text: "Log in" }];
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const handleCloseMenu = () => {
+    setMenuVisible(false);
+  };
+
+  const handleShowMenu = () => {
+    setMenuVisible(true);
+  };
+
   return (
     <div>
       <nav className="flex flex-row items-center justify-between py-4">
@@ -9,38 +45,16 @@ export default function Navbar() {
           <img src={Logo} alt="twigg-logo" />
 
           <ul className="flex items-center ml-10 gap-8 max-md:hidden">
-            <li className="font-nunito">
-              <NavLink
-                to="/"
-                className={({ isActive }) => (isActive ? "text-primary" : "text-[#222]")}
-              >
-                Home
-              </NavLink>
-            </li>
-            <li className="font-nunito">
-              <NavLink
-                to="/benefits"
-                className={({ isActive }) => (isActive ? "text-primary" : "text-[#222]")}
-              >
-                Benefits
-              </NavLink>
-            </li>
-            <li className="font-nunito">
-              <NavLink
-                to="/how-it-works"
-                className={({ isActive }) => (isActive ? "text-primary" : "text-[#222]")}
-              >
-                How it works
-              </NavLink>
-            </li>
-            <li className="font-nunito">
-              <NavLink
-                to="/contact"
-                className={({ isActive }) => (isActive ? "text-primary" : "text-[#222]")}
-              >
-                Contact us
-              </NavLink>
-            </li>
+            {MENU_ITEMS.map((menuItem, index) => (
+              <li className="font-nunito" key={`menu-item-${index}`}>
+                <NavLink
+                  to={menuItem.link}
+                  className={({ isActive }) => (isActive ? "text-primary" : "text-[#222]")}
+                >
+                  {menuItem.text}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -53,6 +67,40 @@ export default function Navbar() {
             <Link to="/register">Get Started</Link>
           </p>
         </div>
+
+        <div className="hidden max-md:block" onClick={handleShowMenu}>
+          <img src={Hamburger} alt="hamburger_icon" />
+        </div>
+
+        {menuVisible && (
+          <div className="fixed top-0 left-0 w-screen h-screen flex flex-col bg-white z-50 px-10 py-4">
+            <div className="flex justify-between items-center mb-12">
+              <img src={Logo} alt="twigg-logo" />
+              <div onClick={handleCloseMenu}>
+                <img src={CloseX} alt="close-x" />
+              </div>
+            </div>
+            <ul className="flex flex-col gap-8 w-[100%]">
+              {MOBILE_MENU_ITEMS.map((menuItem, index) => (
+                <li
+                  className="font-nunito text-[21px] border-b-[1px] border-[#EBEBEB] py-6"
+                  key={`menu-item-${index}`}
+                >
+                  <NavLink
+                    to={menuItem.link}
+                    className={({ isActive }) => (isActive ? "text-primary" : "text-[#222]")}
+                  >
+                    {menuItem.text}
+                  </NavLink>
+                </li>
+              ))}
+
+              <div className="mt-6 w-[100%]">
+                <Button onClick={() => navigate("/register")}>Get Started</Button>
+              </div>
+            </ul>
+          </div>
+        )}
       </nav>
     </div>
   );

@@ -30,7 +30,7 @@ export default function CreateProfile() {
               </Button>
 
               {!isFirstStep && (
-                <div onClick={prev} className="text-center mt-5">
+                <div onClick={prev} className="text-center mt-5 cursor-pointer">
                   <p className="font-nunito text-base text-primary underline">Previous</p>
                 </div>
               )}
