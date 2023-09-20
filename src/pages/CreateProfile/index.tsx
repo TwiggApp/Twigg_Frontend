@@ -17,7 +17,7 @@ export default function CreateProfile() {
       <div className="flex flex-col justify-center -translate-y-6">
         <img src={Logo} alt="twigg-logo" className="max-md:mt-4 w-[90px] max-md:mx-6" />
 
-        <div className="min-h-[528px] w-[522px] max-md:w-[95vw] py-8 md:px-10 max-md:px-6 bg-white md:shadow-md rounded-md mt-4">
+        <div className="h-[760px] w-[522px] max-md:w-[95vw] py-8 md:px-10 max-md:px-6 bg-white md:shadow-md rounded-md mt-4">
           <div className="w-[422px] max-md:w-[100%] mx-auto">
             <h2 className="text-primary text-[26px] text-[500] mb-6">Create your profile</h2>
 

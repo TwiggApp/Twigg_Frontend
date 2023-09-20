@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { BeatLoader } from "react-spinners";
 
 interface ButtonProps {
   children: ReactNode;
@@ -7,6 +8,7 @@ interface ButtonProps {
   textColor?: string;
   alternateFont?: "nunito";
   onClick?: () => void;
+  loading?: boolean;
 }
 
 export default function Button({
@@ -16,16 +18,22 @@ export default function Button({
   textColor,
   alternateFont,
   onClick,
+  loading = false,
 }: ButtonProps) {
   const txtColor = textColor ? textColor : inverted ? "text-primary" : "text-white";
   return (
     <div
-      className={`min-w-[150px] max-w-[100%] px-[30px] py-[14px] bg-primary cursor-pointer rounded-md flex justify-center items-center border-[1.5px] border-primary ${
+      className={`min-w-[150px] max-w-[100%] h-[60px] px-[30px] py-[14px] bg-primary cursor-pointer rounded-md flex justify-center items-center border-[1.5px] border-primary ${
         inverted && "bg-transparent"
       } ${bgColor && bgColor} ${txtColor} ${alternateFont && "font-nunito"} `}
-      onClick={onClick}
+      onClick={() => {
+        if (loading) return;
+        onClick?.();
+      }}
+      aria-disabled={loading}
     >
-      {children}
+      {!loading && children}
+      {loading && <BeatLoader color="white" loading={loading} />}
     </div>
   );
 }
