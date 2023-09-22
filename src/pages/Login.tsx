@@ -51,20 +51,19 @@ export default function Login() {
             </h2>
 
             <div className="mt-8">
-              <Field label="Business Email">
+              <Field label="Business Email" error={errors.email}>
                 <TextInput
                   placeholder="ex. info@bistrodelightrestaurant.com"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
                   onFocus={clearErrOnFocus}
-                  error={errors.email}
                 />
               </Field>
             </div>
 
             <div className="mt-5">
-              <Field label="Password">
+              <Field label="Password" error={errors.password}>
                 <TextInput
                   placeholder=""
                   secure
@@ -75,7 +74,6 @@ export default function Login() {
                   value={formData.password}
                   onChange={handleInputChange}
                   onFocus={clearErrOnFocus}
-                  error={errors.password}
                 />
               </Field>
             </div>
