@@ -1,27 +1,32 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { apiClient } from "../../api/apiClient";
-import { IUser, LoginData, RegisterData } from "../../types/auth";
+import { ICloudinaryFile, IUser, LoginData, RegisterData } from "../../types/auth";
+import { base64ToFile } from "../../utils/files";
+
+type Role = "owner" | "employee" | "manager" | string;
+
+interface ProfileData {
+  country: string;
+  state: string;
+  businessPhoneNumber: string;
+  logo: string | Blob | ICloudinaryFile | null;
+  contactEmail: string;
+  contactName: string;
+  contactNumber: string;
+  contactRole: Role;
+  instagram: string;
+  tiktok: string;
+  whatsapp: string;
+  facebook: string;
+  details: string;
+}
 
 interface AuthState {
   loading: boolean;
   error: string;
   user: IUser | null;
   token: string;
-  profileData: {
-    country: string;
-    state: string;
-    businessPhoneNumber: string;
-    logo: string | Blob | null;
-    contactEmail: string;
-    contactName: string;
-    contactNumber: string;
-    contactRole: "owner" | "employee" | "manager" | "";
-    instagram: string;
-    tiktok: string;
-    whatsapp: string;
-    facebook: string;
-    details: string;
-  };
+  profileData: ProfileData;
   isAuthenticated: boolean;
 }
 
@@ -51,7 +56,19 @@ const initialState: AuthState = {
 export const createProfile = createAsyncThunk(
   "auth/createProfile",
   async ({ formData }: { formData: object }) => {
-    const response = await apiClient.put("/auth/profile", formData);
+    const fileData = new FormData();
+    const logoFile = base64ToFile((formData as { logo: string }).logo);
+    const newForm: ProfileData = { ...(formData as ProfileData) };
+
+    if (logoFile) {
+      fileData.append("file", logoFile);
+      const fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
+      newForm.logo = fileResponse.data;
+    }
+
+    newForm.contactRole = newForm.contactRole.toLowerCase();
+
+    const response = await apiClient.put("/auth/profile", newForm);
     return response.data;
   }
 );
@@ -108,6 +125,22 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state) => {
         state.loading = false;
         state.error = "failed";
+      })
+      .addCase(createProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createProfile.fulfilled, (state) => {
+        state.loading = false;
+        const magicToken = localStorage.getItem("magicToken");
+
+        // Remove the magic token key and replace with authToken
+        if (magicToken) {
+          localStorage.removeItem("magicToken");
+          localStorage.setItem("authToken", magicToken);
+        }
+      })
+      .addCase(createProfile.rejected, (state) => {
+        state.loading = false;
       })
       .addCase(loginUser.pending, (state) => {
         state.loading = true;

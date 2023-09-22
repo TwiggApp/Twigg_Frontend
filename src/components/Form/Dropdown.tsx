@@ -55,7 +55,7 @@ export default function Dropdown({
       </div>
 
       {visible && (
-        <div className="absolute w-[100%] top-16 z-10 bg-white min-h-[100px] max-h-[250px] overflow-auto flex flex-col gap-2 px-6 py-4 border-[1px] border-[#D6D6D6] rounded-md cursor-pointer">
+        <div className="absolute w-[100%] top-16 z-10 bg-white min-h-fit max-h-[300px] overflow-auto flex flex-col gap-2 px-6 py-4 border-[1px] border-[#D6D6D6] rounded-md cursor-pointer">
           {dropdownItems.map((dropdown, i) => (
             <div
               className="w-[100%] hover:bg-[#E9F6F2] rounded-md p-3 font-nunito text-[#2B2B2B]"

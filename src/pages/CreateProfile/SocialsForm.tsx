@@ -1,6 +1,16 @@
 import Field from "../../components/Form/Field";
 import TextInput from "../../components/Form/TextInput";
 import Button from "../../components/Button";
+import { useEffect, useState } from "react";
+import { Socials } from "../../types/auth";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import * as yup from "yup";
+import { useValidator } from "../../hooks/useValidator";
+import { authActions } from "../../redux/slices/authSlice";
+
+const socialSchema = yup.object({
+  whatsapp: yup.string().required("Whatsapp Number is a required field"),
+});
 
 interface SocialsFormProps {
   onSubmit: () => void;
@@ -9,38 +19,86 @@ interface SocialsFormProps {
 }
 
 export default function SocialsForm({ prev, loading, onSubmit }: SocialsFormProps) {
+  const dispatch = useAppDispatch();
+  const profileData = useAppSelector((state) => state.auth.profileData);
+  const [formData, setFormData] = useState<Socials>(profileData);
+
+  useEffect(() => {
+    setFormData(profileData);
+  }, [profileData]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    dispatch(authActions.updateProfileData({ [name]: value }));
+  };
+
+  const { errors, validate } = useValidator(formData, socialSchema);
+
+  const handleSubmit = async () => {
+    if (await validate()) {
+      onSubmit();
+    }
+  };
+
   return (
     <>
       <div className="mt-4">
         <Field label="Instagram Handle">
-          <TextInput placeholder="ex. the_bistrodelight" />
+          <TextInput
+            placeholder="ex. the_bistrodelight"
+            name="instagram"
+            value={formData.instagram}
+            onChange={handleInputChange}
+          />
         </Field>
       </div>
 
       <div className="mt-5">
-        <Field label="WhatsApp Number">
-          <TextInput placeholder="+234" />
+        <Field label="WhatsApp Number" error={errors.whatsapp}>
+          <TextInput
+            placeholder="+234"
+            name="whatsapp"
+            value={formData.whatsapp}
+            onChange={handleInputChange}
+          />
         </Field>
       </div>
 
       <div className="mt-5">
         <Field label="TikTok Handle">
-          <TextInput placeholder="ex. the_bistrodelight" />
+          <TextInput
+            placeholder="ex. the_bistrodelight"
+            name="tiktok"
+            value={formData.tiktok}
+            onChange={handleInputChange}
+          />
         </Field>
       </div>
 
       <div className="mt-5">
         <Field label="Facebook Handle">
-          <TextInput placeholder="ex. the_bistrodelight" />
+          <TextInput
+            placeholder="ex. the_bistrodelight"
+            name="facebook"
+            value={formData.facebook}
+            onChange={handleInputChange}
+          />
         </Field>
       </div>
 
       <div className="mt-10">
-        <Button onClick={onSubmit} alternateFont="nunito" loading={loading}>
+        <Button onClick={handleSubmit} alternateFont="nunito" loading={loading}>
           Submit
         </Button>
 
-        <div onClick={prev} className="text-center mt-5 cursor-pointer">
+        <div
+          onClick={() => {
+            if (loading) return;
+            prev();
+          }}
+          className="text-center mt-5 cursor-pointer"
+        >
           <p className="font-nunito text-base text-primary underline">Previous</p>
         </div>
       </div>
