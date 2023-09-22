@@ -78,8 +78,11 @@ export default function Home() {
           </h2>
 
           <div className="mt-16 flex gap-12 max-md:flex-col">
-            {benefits.map((benefit) => (
-              <div className="flex flex-col justify-center text-center items-center gap-4 min-h-[240px] w-[240px] max-md:w-[280px] max-md:h-[280px] rounded-md bg-white p-4 shadow-4.58209 shadow-18.32836 shadow-54.98507 shadow-0 rgba-178-178-178-15">
+            {benefits.map((benefit, index) => (
+              <div
+                key={`benefit-${index}`}
+                className="flex flex-col justify-center text-center items-center gap-4 min-h-[240px] w-[240px] max-md:w-[280px] max-md:h-[280px] rounded-md bg-white p-4 shadow-4.58209 shadow-18.32836 shadow-54.98507 shadow-0 rgba-178-178-178-15"
+              >
                 <img src={benefit.image} alt="money" className="w-[65px] h-[65px]" />
                 <h3 className="text-[#2B2B2B] text-[24px] font-normal">{benefit.title}</h3>
                 <p className="text-[#777] text-sm">{benefit.content}</p>

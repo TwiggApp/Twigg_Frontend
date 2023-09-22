@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import TextInput from "../components/Form/TextInput";
@@ -8,14 +8,9 @@ import EyeShut from "../assets/eye-shut.svg";
 import Field from "../components/Form/Field";
 import * as yup from "yup";
 import { useValidator } from "../hooks/useValidator";
-import { apiClient } from "../api/apiClient";
-
-interface FormData {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { authActions } from "../redux/slices/authSlice";
+import { RegisterData } from "../types/auth";
 
 const userSchema = yup.object({
   name: yup.string().required("Business name is required"),
@@ -29,17 +24,19 @@ const userSchema = yup.object({
 
 export default function Register() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { token } = useAppSelector((state) => state.auth);
 
-  const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<RegisterData>({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
+  const { loading } = useAppSelector((state) => state.auth);
   const { errors, validate, clearErrOnFocus } = useValidator(formData, userSchema);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,18 +44,18 @@ export default function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
+  useEffect(() => {
+    if (token) {
+      dispatch(authActions.verifyToken({ token }));
+      navigate("/create-profile");
+    }
+  }, [token, dispatch, navigate]);
+
   const handleSubmit = async () => {
     if (await validate()) {
-      try {
-        setLoading(true);
-        const response = await apiClient.post("/auth/signup", formData);
-        console.log(response);
-        navigate("/create-profile");
-      } catch (err) {
-        // console.log(err);
-      } finally {
-        setLoading(false);
-      }
+      await dispatch(authActions.registerUser({ formData }));
+      // await dispatch(authActions.verifyToken({ token }));
+      // navigate("/create-profile");
     }
   };
 
@@ -67,25 +64,24 @@ export default function Register() {
       <div className="flex flex-col max-md:items-center justify-center">
         <img src={Logo} alt="twigg-logo" className="max-md:mt-4 w-[90px]" />
 
-        <div className="min-h-[710px] w-[522px] max-md:w-[95vw] py-8 bg-white max-md:px-6 md:shadow-md rounded-md mt-4">
+        <div className="min-h-[710px] w-[522px] max-md:w-[95vw] py-8 bg-white max-md:px-4 md:shadow-md rounded-md mt-4">
           <form className="w-[422px] max-md:w-[100%] mx-auto">
             <h2 className="text-primary text-[26px] text-[500]">Create your twigg account</h2>
 
             <div className="mt-8">
-              <Field label="Business Name*">
+              <Field label="Business Name*" error={errors.name}>
                 <TextInput
                   placeholder="ex. The Bistro Delight"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   onFocus={clearErrOnFocus}
-                  error={errors.name}
                 />
               </Field>
             </div>
 
             <div className="mt-4">
-              <Field label="Business Email*">
+              <Field label="Business Email*" error={errors.email}>
                 <TextInput
                   placeholder="ex. info@bistrodelightrestaurant.com"
                   name="email"
@@ -98,7 +94,7 @@ export default function Register() {
             </div>
 
             <div className="mt-4">
-              <Field label="Password">
+              <Field label="Password" error={errors.password}>
                 <TextInput
                   placeholder=""
                   secure
@@ -109,13 +105,12 @@ export default function Register() {
                   value={formData.password}
                   onChange={handleInputChange}
                   onFocus={clearErrOnFocus}
-                  error={errors.password}
                 />
               </Field>
             </div>
 
             <div className="mt-4">
-              <Field label="Confirm Password">
+              <Field label="Confirm Password" error={errors.confirmPassword}>
                 <TextInput
                   placeholder=""
                   secure
@@ -126,7 +121,6 @@ export default function Register() {
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   onFocus={clearErrOnFocus}
-                  error={errors.confirmPassword}
                 />
               </Field>
             </div>

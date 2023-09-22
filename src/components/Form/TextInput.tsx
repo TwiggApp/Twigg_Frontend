@@ -36,7 +36,6 @@ export default function TextInput({
         onChange={onChange}
         onFocus={onFocus}
       />
-      {!!error && <small className="font-nunito text-red-500">{error}</small>}
       {rightIcon && (
         <div className="absolute top-4 right-4 cursor-pointer" onClick={onRightIconClick}>
           <img src={rightIcon} alt="icon" />

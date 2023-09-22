@@ -1,9 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import CreateProfile from "./pages/CreateProfile";
-import { Toaster } from "react-hot-toast";
 import "./App.css";
 
 const router = createBrowserRouter([

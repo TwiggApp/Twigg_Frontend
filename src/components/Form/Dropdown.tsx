@@ -4,13 +4,23 @@ import ArrowUp from "../../assets/arrow-up.svg";
 
 interface DropdownProps {
   placeholder?: string;
-  onSelect?: (value: string) => void;
+  onSelect?: (name: string, value: string) => void;
   dropdownItems: string[];
+  name?: string;
+  value?: string;
+  error?: string;
 }
 
-export default function Dropdown({ placeholder, dropdownItems }: DropdownProps) {
+export default function Dropdown({
+  placeholder,
+  dropdownItems,
+  name,
+  error,
+  value = "",
+  onSelect,
+}: DropdownProps) {
   const [visible, setVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState("");
+  const [selectedItem, setSelectedItem] = useState(value);
 
   const handleClick = () => {
     setVisible((prev) => !prev);
@@ -19,14 +29,22 @@ export default function Dropdown({ placeholder, dropdownItems }: DropdownProps) 
   const handleDropdownItemClick = (value: string) => {
     setSelectedItem(value);
     handleClick();
+
+    if (onSelect) {
+      if (!name) throw new Error("no name exists on field");
+      onSelect(name, value);
+    }
   };
 
   return (
-    <div className="relative">
+    <div className="relative" itemType="dropdown">
       <div
         tabIndex={0}
-        className="flex flex-row items-center justify-between w-[422px] max-md:w-[100%] px-[10px] py-[14px] border-[1px] border-[#D6D6D6] rounded-md outline-none font-nunito focus:border-primary cursor-pointer"
+        className={`flex flex-row items-center justify-between w-[422px] max-md:w-[100%] px-[10px] py-[14px] border-[1px] border-[#D6D6D6] rounded-md outline-none font-nunito focus:border-primary ${
+          error && "border-red-500"
+        } cursor-pointer`}
         onClick={handleClick}
+        itemType="dropdown"
       >
         {selectedItem ? (
           <div className="text-base">{selectedItem}</div>

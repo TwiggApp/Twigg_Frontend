@@ -5,7 +5,6 @@ export function useMultiStep(steps: ReactElement[]) {
 
   function next() {
     setCurrentStepIndex((prev) => (prev >= steps.length - 1 ? prev : prev + 1));
-    console.log(currentStepIndex);
   }
 
   function prev() {

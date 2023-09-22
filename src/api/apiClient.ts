@@ -5,10 +5,21 @@ export const apiClient: AxiosInstance = axios.create({
   baseURL: `${import.meta.env.VITE_BACKEND_URL}`,
 });
 
-// apiClient.interceptors.request.use()
+apiClient.interceptors.request.use((config) => {
+  const authToken = localStorage.getItem("authToken");
+  const magicToken = localStorage.getItem("magicToken");
+  const tempToken = localStorage.getItem("tempToken");
+
+  if (authToken) config.headers["x-access-token"] = authToken;
+  if (magicToken) config.headers["x-access-token"] = magicToken;
+  if (tempToken) config.headers["x-temp-token"] = tempToken;
+
+  return config;
+});
+
 apiClient.interceptors.response.use(
   (response) => {
-    return response.data;
+    return response;
   },
   (error) => {
     if (isAxiosError(error)) {
