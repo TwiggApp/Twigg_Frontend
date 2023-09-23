@@ -29,7 +29,7 @@ export interface BusinessDetails {
   country: string;
   state: string;
   businessPhoneNumber: string;
-  logo: File | string | Blob | null;
+  logo: ICloudinaryFile | string | Blob | null;
 }
 
 export interface Contact {
