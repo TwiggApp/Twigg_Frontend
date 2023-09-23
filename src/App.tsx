@@ -1,24 +1,41 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import CreateProfile from "./pages/CreateProfile";
-// import PrivateRoute from "./components/PrivateRoute";
+import DashboardHome from "./pages/Dashboard/Home";
+import PrivateRoute from "./components/PrivateRoute";
+import SidebarLayout from "./components/Layouts/SidebarLayout";
+import NotPrivateRoute from "./components/NonPrivateRoute";
+import Menu from "./pages/Dashboard/Menu";
+import Foods from "./pages/Dashboard/Foods";
 import "./App.css";
-
-const router = createBrowserRouter([
-  { path: "", element: <Home /> },
-  { path: "/register", element: <Register /> },
-  { path: "/login", element: <Login /> },
-  { path: "/create-profile", element: <CreateProfile /> },
-]);
 
 function App() {
   return (
     <>
       <Toaster />
-      <RouterProvider router={router} />;
+      <BrowserRouter>
+        <Routes>
+          <Route path="" element={<Home />} />
+          <Route element={<NotPrivateRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/create-profile" element={<CreateProfile />} />
+          </Route>
+
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<SidebarLayout />}>
+              <Route index element={<DashboardHome />} />
+              <Route path="categories">
+                <Route index element={<Menu />} />
+                <Route path=":categoryId" element={<Foods />} />
+              </Route>
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

@@ -14,7 +14,7 @@ export interface IUser {
   name: string;
   phoneNumber?: string;
   email: string;
-  logo: string;
+  logo: ICloudinaryFile | null;
   _id: string;
 }
 

@@ -43,4 +43,8 @@ body {
     .footer-link {
         @apply font-nunito text-base text-[#2B2B2B] font-[400px];
     }
+
+    .text-gray {
+        @apply text-[#555];
+    }
 }

@@ -7,9 +7,11 @@ import SocialsForm from "./SocialsForm";
 import FadeIn from "react-fade-in/lib/FadeIn";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { authActions } from "../../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateProfile() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { loading, profileData } = useAppSelector((state) => state.auth);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
@@ -26,6 +28,7 @@ export default function CreateProfile() {
       next();
     } else {
       await dispatch(authActions.createProfile({ formData: profileData }));
+      navigate("/login");
     }
   };
 

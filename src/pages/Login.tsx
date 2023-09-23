@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import TextInput from "../components/Form/TextInput";
 import Button from "../components/Button";
@@ -18,6 +18,7 @@ const loginSchema = yup.object({
 
 export default function Login() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -36,6 +37,7 @@ export default function Login() {
   const handleSubmit = async () => {
     if (await validate()) {
       await dispatch(authActions.loginUser({ formData }));
+      navigate("/dashboard");
     }
   };
 
