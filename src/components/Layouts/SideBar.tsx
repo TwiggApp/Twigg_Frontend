@@ -1,12 +1,12 @@
 import { Sidebar, Menu, MenuItem, MenuItemProps, menuClasses } from "react-pro-sidebar";
-import Logo from "../assets/logo.svg";
-import RadixIcon from "../assets/sidebar/radix.svg";
-import MenuIcon from "../assets/sidebar/menu.svg";
-import SettingsIcon from "../assets/sidebar/settings.svg";
-import LogoutIcon from "../assets/sidebar/logout.svg";
+import Logo from "../../assets/logo.svg";
+import RadixIcon from "../../assets/sidebar/radix.svg";
+import MenuIcon from "../../assets/sidebar/menu.svg";
+import SettingsIcon from "../../assets/sidebar/settings.svg";
+import LogoutIcon from "../../assets/sidebar/logout.svg";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../../redux/hooks";
 
 const PRIMARY_COLOR = "#2B6C57";
 const ACTIVE_COLOR = "#F0F9F6";
