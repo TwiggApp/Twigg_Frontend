@@ -8,7 +8,7 @@ interface AddButtonProps {
 export default function AddButton({ onClick, text }: AddButtonProps) {
   return (
     <div
-      className="flex flex-row items-center gap-2 cursor-pointer"
+      className="flex flex-row items-center gap-2 cursor-pointer rounded-md hover:bg-gray-100 p-4"
       onClick={() => {
         onClick && onClick();
       }}

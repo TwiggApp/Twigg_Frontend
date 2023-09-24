@@ -21,7 +21,7 @@ interface SocialsFormProps {
 export default function SocialsForm({ prev, loading, onSubmit }: SocialsFormProps) {
   const dispatch = useAppDispatch();
   const profileData = useAppSelector((state) => state.auth.profileData);
-  const [formData, setFormData] = useState<Socials>(profileData);
+  const [formData, setFormData] = useState<Partial<Socials>>(profileData);
 
   useEffect(() => {
     setFormData(profileData);

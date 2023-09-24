@@ -27,7 +27,7 @@ interface UserDetailsFormProps {
 export default function UserDetailsForm({ onSubmit, prev }: UserDetailsFormProps) {
   const dispatch = useAppDispatch();
   const profileData = useAppSelector((state) => state.auth.profileData);
-  const [formData, setFormData] = useState<Contact>(profileData);
+  const [formData, setFormData] = useState<Partial<Contact>>(profileData);
 
   useEffect(() => {
     setFormData(profileData);

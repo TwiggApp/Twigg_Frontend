@@ -8,7 +8,7 @@ import DashboardHome from "./pages/Dashboard/Home";
 import PrivateRoute from "./components/PrivateRoute";
 import SidebarLayout from "./components/Layouts/SidebarLayout";
 import NotPrivateRoute from "./components/NonPrivateRoute";
-import Menu from "./pages/Dashboard/Menu";
+import Category from "./pages/Dashboard/Category";
 import Foods from "./pages/Dashboard/Foods";
 import "./App.css";
 
@@ -29,7 +29,7 @@ function App() {
             <Route path="/dashboard" element={<SidebarLayout />}>
               <Route index element={<DashboardHome />} />
               <Route path="categories">
-                <Route index element={<Menu />} />
+                <Route index element={<Category />} />
                 <Route path=":categoryId" element={<Foods />} />
               </Route>
             </Route>

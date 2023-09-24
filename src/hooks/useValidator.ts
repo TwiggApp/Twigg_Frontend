@@ -19,7 +19,7 @@ export function useValidator<T>(formData: T, schema: ObjectSchema<object>) {
     }
   }
 
-  function clearErrOnFocus(e: React.FocusEvent<HTMLInputElement>) {
+  function clearErrOnFocus(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name } = e.target;
     setErrors({ ...errors, [name]: "" });
   }

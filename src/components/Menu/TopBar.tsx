@@ -2,7 +2,7 @@ import Button from "../Button";
 
 export default function TopBar() {
   return (
-    <div className="flex flex-row justify-between items-center w-[100%] px-16 h-[68px] bg-white">
+    <div className="flex flex-row justify-between items-center w-[100%] px-16 h-[80px] bg-white">
       <h1 className="text-gray font-nunito text-[20px]">Main Menu</h1>
 
       <div className="flex flex-row gap-3">

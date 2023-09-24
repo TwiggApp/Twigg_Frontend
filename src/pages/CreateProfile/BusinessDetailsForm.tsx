@@ -42,7 +42,7 @@ export default function BusinessDetailsForm({ onSubmit }: BusinessDetailsFormPro
   const dispatch = useAppDispatch();
   const profileData = useAppSelector((state) => state.auth.profileData);
 
-  const [formData, setFormData] = useState<BusinessDetails>(profileData);
+  const [formData, setFormData] = useState<Partial<BusinessDetails>>(profileData);
   const { errors, validate, clearErrOnFocus } = useValidator(formData, businessProfileSchema);
 
   useEffect(() => {
