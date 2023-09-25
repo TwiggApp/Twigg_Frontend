@@ -1,23 +1,22 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useState } from "react";
+import { useValidator } from "../../hooks/useValidator";
+import { IFood } from "../../types/menu";
+import { fileTest } from "../../utils/files";
 import TopBar from "../../components/Menu/TopBar";
 import AddButton from "../../components/Menu/AddButton";
 import MenuItem from "../../components/Menu/MenuItem";
-import RiceImg from "../../assets/foods/rice.svg";
 import Modal from "../../components/Modals/Modal";
 import ModalHeader from "../../components/Modals/ModalHeader";
 import Field from "../../components/Form/Field";
 import TextInput from "../../components/Form/TextInput";
 import Button from "../../components/Button";
 import DropZone from "../../components/Form/DropZone";
+import Loader from "../../components/Loader";
 import * as yup from "yup";
-import { useValidator } from "../../hooks/useValidator";
-import { IFood } from "../../types/menu";
-
-const foodItems = [
-  { id: 1, name: "Jollof Rice", price: "₦1,700.00", image: RiceImg },
-  { id: 2, name: "Fried Rice", price: "₦1,800.00", image: RiceImg },
-];
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { foodActions } from "../../redux/slices/foodItemSlice";
+import { ICloudinaryFile } from "../../types/auth";
 
 const foodSchema = yup.object({
   name: yup
@@ -29,14 +28,24 @@ const foodSchema = yup.object({
     .min(0, "Price must be greater than 0")
     .max(1000000)
     .required("Price is a required field"),
+  image: fileTest(yup.string().required("Please select an image"), 5),
 });
 
 export default function Foods() {
   const params = useParams();
+  const dispatch = useAppDispatch();
+  const { submitting, loading, foods } = useAppSelector((state) => state.food);
+
+  const location = useLocation();
+
+  // useEffect(() => {
+  //   dispatch(foodActions.fetchFoods({ itemId: location.state.categoryId }));
+  // }, [dispatch, location.state.categoryId]);
 
   const [formData, setFormData] = useState<IFood>({
     name: "",
     price: "",
+    image: "",
   });
   const [modalVisible, setModalVisible] = useState(false);
   const { errors, validate, clearErrOnFocus } = useValidator(formData, foodSchema);
@@ -52,9 +61,11 @@ export default function Foods() {
 
   const handleAddFood = async () => {
     if (await validate()) {
-      console.log("Adding Food...");
+      dispatch(foodActions.createFood({ name: formData.name, image: formData.image as string }));
     }
   };
+
+  if (loading) return <Loader loading={loading} />;
 
   return (
     <>
@@ -64,9 +75,19 @@ export default function Foods() {
             <ModalHeader title="Add a food item" onClick={() => setModalVisible(false)} />
 
             <div className="h-[100%] w-[100%]">
-              <div>
-                <DropZone />
-              </div>
+              <Field error={errors.image as string}>
+                <DropZone
+                  file={formData.image as string}
+                  onFileChange={(value) => {
+                    setFormData({ ...formData, image: value });
+                  }}
+                  onFocus={() => {
+                    clearErrOnFocus({
+                      target: { name: "image" },
+                    } as unknown as React.FocusEvent<HTMLInputElement>);
+                  }}
+                />
+              </Field>
 
               <div className="mt-4">
                 <Field label="Name" error={errors.name}>
@@ -93,7 +114,9 @@ export default function Foods() {
               </div>
 
               <div className="mt-8">
-                <Button onClick={handleAddFood}>Add Food</Button>
+                <Button onClick={handleAddFood} loading={submitting}>
+                  Add Food
+                </Button>
               </div>
             </div>
           </div>
@@ -111,16 +134,22 @@ export default function Foods() {
           </div>
 
           <div className="flex flex-wrap mt-10 gap-6">
-            {foodItems.map((foodItem, index) => {
-              const food = { ...foodItem, subtitle: `${foodItem.price}` };
-              return (
-                <MenuItem
-                  key={`menu-item-${index}`}
-                  menuItem={food}
-                  onClick={() => handleMenuItemClick(food.name)}
-                />
-              );
-            })}
+            {!!foods.length &&
+              foods.map((food, index) => {
+                const menu = {
+                  name: food.name,
+                  image: (food.image as ICloudinaryFile).secure_url!,
+                  subtitle: `${food.price}`,
+                };
+
+                return (
+                  <MenuItem
+                    key={`menu-item-${index}`}
+                    menuItem={menu}
+                    onClick={() => handleMenuItemClick(food.name)}
+                  />
+                );
+              })}
           </div>
         </div>
       </div>

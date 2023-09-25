@@ -1,5 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useValidator } from "../../hooks/useValidator";
+import { IMenu } from "../../types/menu";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { menuActions } from "../../redux/slices/menuSlice";
 import NoMenuSvg from "../../assets/dashboard/no-menu.svg";
 import AddMenuSvg from "../../assets/dashboard/add-menu.svg";
 import Button from "../../components/Button";
@@ -10,8 +14,6 @@ import Field from "../../components/Form/Field";
 import ModalHeader from "../../components/Modals/ModalHeader";
 import TextArea from "../../components/Form/TextArea";
 import * as yup from "yup";
-import { useValidator } from "../../hooks/useValidator";
-import { IMenu } from "../../types/menu";
 
 const menuItems = [
   { id: 1, name: "Main menu", categories: 5, items: 20, date: new Date() },
@@ -45,6 +47,9 @@ const createMenuSchema = yup.object({
 
 export default function Home() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, menus } = useAppSelector((state) => state.menu);
+
   const [menuModal, setMenuModal] = useState(false);
   const [formData, setFormData] = useState<IMenu>({
     name: "",
@@ -71,6 +76,7 @@ export default function Home() {
       setItems([...items, menuItems[0]]);
       setFormData({ name: "", description: "" });
       setMenuModal(false);
+      dispatch(menuActions.manualMenu(formData));
     }
   };
 
@@ -105,7 +111,9 @@ export default function Home() {
               </div>
 
               <div className="mt-8">
-                <Button onClick={handleCreateMenuClick}>Create Menu</Button>
+                <Button onClick={handleCreateMenuClick} loading={loading}>
+                  Create Menu
+                </Button>
               </div>
             </div>
           </div>
@@ -113,7 +121,7 @@ export default function Home() {
       </Modal>
 
       <div className="flex h-[100vh]">
-        {items.length === 0 ? (
+        {menus.length === 0 ? (
           <NoMenuItem onButtonClick={() => setMenuModal(true)} />
         ) : (
           <div className="h-[100%] w-[100%] px-16 pt-16">
@@ -123,12 +131,12 @@ export default function Home() {
             <h2 className="text-[20px] text-[#555] font-nunito mt-16">Your menus</h2>
 
             <div className="flex flex-row flex-wrap mt-6 gap-4">
-              {menuItems.map((menuItem, index) => (
+              {menus.map((menuItem, index) => (
                 <MenuCard
                   name={menuItem.name}
-                  categories={menuItem.categories}
-                  items={menuItem.items}
-                  date={menuItem.date}
+                  categories={menuItem?.categories}
+                  items={menuItem?.items}
+                  date={menuItem?.date}
                   key={`menu-card-${index}`}
                   onClick={handleMenuItemClick}
                 />

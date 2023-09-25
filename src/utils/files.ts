@@ -1,3 +1,5 @@
+import * as yup from "yup";
+
 export function getBase64Type(base64String: string) {
   const mimeTypeMatch = base64String.match(/^data:([a-zA-Z]+\/[a-zA-Z]+);base64,/);
 
@@ -78,4 +80,21 @@ export function base64ToFile(base64String: string): File | null {
     console.error("Error converting base64 to file:", error);
     return null;
   }
+}
+export function fileTest(schema: yup.StringSchema, maxFileSizeInMb: number = 3) {
+  return schema
+    .test("fileSize", "File size is too large", (value) => {
+      if (!value) {
+        return true;
+      }
+      return getBase64FileSize(value as string).megabytes <= maxFileSizeInMb;
+    })
+    .test("fileType", "Invalid file type", (value) => {
+      if (!value) {
+        return true;
+      }
+      const allowedTypes = ["image/jpeg", "image/png"];
+      const mimeType = getBase64Type(value as string);
+      return allowedTypes.includes(`${mimeType}`);
+    });
 }

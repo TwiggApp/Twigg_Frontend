@@ -3,9 +3,9 @@ import Dots from "../../assets/dashboard/dots.svg";
 
 interface MenuCardProps {
   name: string;
-  categories: number;
-  items: number;
-  date: Date;
+  categories?: number;
+  items?: number;
+  date?: Date;
   onClick?: () => void;
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
 const PictureSvg = () => {
@@ -38,27 +38,39 @@ const CloseSvg = () => {
   );
 };
 
-export default function DropZone() {
-  const [file, setFile] = useState<string | null>(null);
+interface DropZoneProps {
+  file: string | null;
+  onFileChange: (value: string) => void;
+  error?: string;
+  onFocus?: () => void;
+}
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setFile(event.target?.result as string);
-    };
-    reader.readAsDataURL(acceptedFiles[0]);
-  }, []);
+export default function DropZone({ file, error, onFileChange, onFocus }: DropZoneProps) {
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        onFileChange(event.target?.result as string);
+      };
+      reader.readAsDataURL(acceptedFiles[0]);
+      onFocus && onFocus();
+    },
+    [onFileChange, onFocus]
+  );
 
   const { getInputProps, getRootProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div className="w-[100%] h-[150px] border-[2px] border-[#D6D6D6] border-dashed rounded-md cursor-pointer">
+    <div
+      className={`w-[100%] h-[150px] border-[2px] ${
+        error ? "border-red-500" : "border-[#D6D6D6]"
+      } border-dashed rounded-md cursor-pointer`}
+    >
       {file ? (
         <div className="relative w-[100%] h-[100%] overflow-hidden">
           <div
             className="w-[40px] h-[40px] rounded-full absolute top-2 right-2 bg-gray-100 shadow-lg flex items-center justify-center"
-            onClick={() => setFile(null)}
+            onClick={() => onFileChange("")}
           >
             <CloseSvg />
           </div>

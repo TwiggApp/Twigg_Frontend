@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PastaImg from "../../assets/foods/pasta.svg";
 import AddButton from "../../components/Menu/AddButton";
 import MenuItem from "../../components/Menu/MenuItem";
 import TopBar from "../../components/Menu/TopBar";
-import RiceImg from "../../assets/foods/rice.svg";
-import PastaImg from "../../assets/foods/pasta.svg";
 import Modal from "../../components/Modals/Modal";
 import ModalHeader from "../../components/Modals/ModalHeader";
 import Button from "../../components/Button";
@@ -14,37 +13,45 @@ import DropZone from "../../components/Form/DropZone";
 import * as yup from "yup";
 import { ICategory } from "../../types/menu";
 import { useValidator } from "../../hooks/useValidator";
-
-const menuItems = [
-  { id: 1, name: "Rice", items: 6, image: RiceImg },
-  { id: 2, name: "Pasta", items: 9, image: PastaImg },
-  { id: 3, name: "Soups", items: 20, image: RiceImg },
-  { id: 4, name: "Stew", items: 6, image: PastaImg },
-  { id: 5, name: "Sides", items: 4, image: RiceImg },
-  { id: 6, name: "Drinks", items: 23, image: PastaImg },
-  { id: 7, name: "Pepper Soup", items: 4, image: RiceImg },
-  { id: 8, name: "Proteins", items: 5, image: PastaImg },
-];
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { categoryActions } from "../../redux/slices/categorySlice";
+import { fileTest } from "../../utils/files";
+// import { ICloudinaryFile } from "../../types/auth";
+import Loader from "../../components/Loader";
 
 const categorySchema = yup.object({
   name: yup
     .string()
     .min(2, "Category Name must be greater than 1 character")
     .required("Category Name is a required field"),
+  image: fileTest(yup.string().required("Please select an image"), 5),
 });
 
 export default function Category() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, submitting, categories } = useAppSelector((state) => state.category);
+
+  useEffect(() => {
+    if (!categories.length) {
+      dispatch(categoryActions.fetchCategories());
+    }
+  }, [dispatch, categories]);
 
   const [formData, setFormData] = useState<ICategory>({
     name: "",
+    image: "",
   });
   const [modalVisible, setModalVisible] = useState(false);
 
   const { errors, validate, clearErrOnFocus } = useValidator(formData, categorySchema);
 
-  const handleMenuItemClick = (category: string) => {
-    navigate(`/dashboard/categories/${category}`);
+  const handleMenuItemClick = (category: string, categoryId: string) => {
+    navigate(`/dashboard/categories/${category}`, {
+      state: {
+        categoryId,
+      },
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -54,9 +61,15 @@ export default function Category() {
 
   const handleAddCategory = async () => {
     if (await validate()) {
-      console.log("Creating Category...");
+      await dispatch(
+        categoryActions.createCategory({ name: formData.name, image: formData.image as string })
+      );
+      setFormData({ name: "", image: "" });
+      setModalVisible(false);
     }
   };
+
+  if (loading) return <Loader loading={loading} />;
 
   return (
     <>
@@ -67,7 +80,22 @@ export default function Category() {
 
             <div className="h-[100%]">
               <div>
-                <DropZone />
+                <Field error={errors.image as string}>
+                  <DropZone
+                    file={formData.image as string}
+                    onFileChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        image: value,
+                      })
+                    }
+                    onFocus={() => {
+                      clearErrOnFocus({
+                        target: { name: "image" },
+                      } as unknown as React.FocusEvent<HTMLInputElement>);
+                    }}
+                  />
+                </Field>
               </div>
 
               <div className="mt-4">
@@ -83,7 +111,9 @@ export default function Category() {
               </div>
 
               <div className="mt-8">
-                <Button onClick={handleAddCategory}>Add Category</Button>
+                <Button onClick={handleAddCategory} loading={submitting}>
+                  Add Category
+                </Button>
               </div>
             </div>
           </div>
@@ -101,16 +131,22 @@ export default function Category() {
           </div>
 
           <div className="flex flex-wrap mt-10 gap-6">
-            {menuItems.map((menuItem, index) => {
-              const menu = { ...menuItem, subtitle: `${menuItem.items} items` };
-              return (
-                <MenuItem
-                  key={`menu-item-${index}`}
-                  menuItem={menu}
-                  onClick={() => handleMenuItemClick(menu.name)}
-                />
-              );
-            })}
+            {!!categories.length &&
+              categories.map((category, index) => {
+                const menu = {
+                  name: category.name,
+                  // image: (category.image as ICloudinaryFile).secure_url || PastaImg,
+                  image: PastaImg,
+                  subtitle: `${category.items || 0} items`,
+                };
+                return (
+                  <MenuItem
+                    key={`menu-item-${index}`}
+                    menuItem={menu}
+                    onClick={() => handleMenuItemClick(category.name, category._id!)}
+                  />
+                );
+              })}
           </div>
         </div>
       </div>
