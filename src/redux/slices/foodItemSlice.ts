@@ -18,7 +18,19 @@ const initialState: FoodState = {
 
 const createFood = createAsyncThunk(
   "foods/createFood",
-  async ({ name, image, price }: { name: string; image: string; price: number }) => {
+  async ({
+    name,
+    image,
+    price,
+    menuId,
+    categoryId,
+  }: {
+    name: string;
+    image: string;
+    price: number;
+    menuId: string;
+    categoryId: string;
+  }) => {
     const fileData = new FormData();
     const foodFile = base64ToFile(image);
 
@@ -28,20 +40,26 @@ const createFood = createAsyncThunk(
       fileResponse = (await apiClient.post<ICloudinaryFile>("/file", fileData)).data;
     }
 
-    const response = await apiClient.post("/category", {
+    const response = await apiClient.post("/item", {
       name,
-      image: fileResponse,
       price,
+      category: categoryId,
+      menu: menuId,
+      images: [fileResponse],
+      quantity: "Per Spoon",
+      currency: "NGN",
     });
     return response.data;
   }
 );
 
-const fetchFoods = createAsyncThunk("foods/fetchFoods", async ({ itemId }: { itemId: string }) => {
-  const response = await apiClient.get(`/item/${itemId}`);
-  console.log(response.data);
-  return response.data;
-});
+const fetchFoods = createAsyncThunk(
+  "foods/fetchFoods",
+  async ({ categoryId, menuId }: { categoryId: string; menuId: string }) => {
+    const response = await apiClient.get(`/item?menu=${menuId}&category=${categoryId}`);
+    return response.data;
+  }
+);
 
 const foodItemSlice = createSlice({
   name: "foods",

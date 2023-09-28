@@ -1,5 +1,8 @@
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { useLayoutEffect } from "react";
+import { useAppDispatch } from "./redux/hooks";
+import { authActions } from "./redux/slices/authSlice";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -13,6 +16,14 @@ import Foods from "./pages/Dashboard/Foods";
 import "./App.css";
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  useLayoutEffect(() => {
+    if (localStorage.getItem("authToken")) {
+      dispatch(authActions.authenticateUser());
+    }
+  }, [dispatch]);
+
   return (
     <>
       <Toaster />

@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useLocation, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useValidator } from "../../hooks/useValidator";
 import { IFood } from "../../types/menu";
 import { fileTest } from "../../utils/files";
@@ -17,6 +18,7 @@ import * as yup from "yup";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { foodActions } from "../../redux/slices/foodItemSlice";
 import { ICloudinaryFile } from "../../types/auth";
+import QRModal from "../../components/Menu/QRModal";
 
 const foodSchema = yup.object({
   name: yup
@@ -24,10 +26,12 @@ const foodSchema = yup.object({
     .min(2, "Food Name must be greater than 1 character")
     .required("Food Name is a required field"),
   price: yup
-    .number()
-    .min(0, "Price must be greater than 0")
-    .max(1000000)
-    .required("Price is a required field"),
+    .string()
+    .required("Price is a required field")
+    .test("priceType", "Price must be a number", (value) => {
+      if (!value) return true;
+      return [...value].every((n) => Number.parseInt(n) || n === "." || n === "0");
+    }),
   image: fileTest(yup.string().required("Please select an image"), 5),
 });
 
@@ -38,9 +42,11 @@ export default function Foods() {
 
   const location = useLocation();
 
-  // useEffect(() => {
-  //   dispatch(foodActions.fetchFoods({ itemId: location.state.categoryId }));
-  // }, [dispatch, location.state.categoryId]);
+  useEffect(() => {
+    dispatch(
+      foodActions.fetchFoods({ categoryId: params.categoryId!, menuId: location.state.menuId })
+    );
+  }, [params.categoryId!]);
 
   const [formData, setFormData] = useState<IFood>({
     name: "",
@@ -48,6 +54,7 @@ export default function Foods() {
     image: "",
   });
   const [modalVisible, setModalVisible] = useState(false);
+  const [publishModalVisible, setPublishModalVisible] = useState(false);
   const { errors, validate, clearErrOnFocus } = useValidator(formData, foodSchema);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -61,7 +68,17 @@ export default function Foods() {
 
   const handleAddFood = async () => {
     if (await validate()) {
-      dispatch(foodActions.createFood({ name: formData.name, image: formData.image as string }));
+      await dispatch(
+        foodActions.createFood({
+          name: formData.name,
+          image: formData.image as string,
+          price: parseFloat(formData.price),
+          menuId: location.state.menuId,
+          categoryId: params.categoryId!,
+        })
+      );
+      setFormData({ name: "", image: "", price: "" });
+      setModalVisible(false);
     }
   };
 
@@ -69,6 +86,8 @@ export default function Foods() {
 
   return (
     <>
+      <QRModal visible={publishModalVisible} setModalVisible={setPublishModalVisible} />
+
       <Modal visible={modalVisible} setModalVisible={setModalVisible}>
         <div className="w-[522px] min-h-[595px] bg-white rounded-md shadow-md px-10 pt-10 pb-14 flex flex-col items-center">
           <div className="flex flex-col h-[100%]">
@@ -124,11 +143,11 @@ export default function Foods() {
       </Modal>
 
       <div className="flex flex-col w-full h-full">
-        <TopBar />
+        <TopBar onPublishClick={() => setPublishModalVisible(true)} />
 
         <div className="flex flex-col w-[100%] h-full px-16 py-6">
           <div className="flex flex-row h-[45px] w-[100%] items-center justify-between">
-            <h1 className="text-primary text-[32px] font-bold">{params?.categoryId}</h1>
+            <h1 className="text-primary text-[32px] font-bold">{location.state.category}</h1>
 
             <AddButton text="Add Food Item" onClick={() => setModalVisible(true)} />
           </div>
@@ -138,8 +157,8 @@ export default function Foods() {
               foods.map((food, index) => {
                 const menu = {
                   name: food.name,
-                  image: (food.image as ICloudinaryFile).secure_url!,
-                  subtitle: `${food.price}`,
+                  image: (food.images![0] as ICloudinaryFile).secure_url!,
+                  subtitle: `₦${food.price}`,
                 };
 
                 return (

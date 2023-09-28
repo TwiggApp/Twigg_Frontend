@@ -6,11 +6,13 @@ import SettingsIcon from "../../assets/sidebar/settings.svg";
 import LogoutIcon from "../../assets/sidebar/logout.svg";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { authActions } from "../../redux/slices/authSlice";
 
 const PRIMARY_COLOR = "#2B6C57";
 const ACTIVE_COLOR = "#F0F9F6";
 const TEXT_FG = "#555";
+const RED_HOVER = "rgb(239 68 68 / 0.2)";
 
 function CustomMenuItem({
   component,
@@ -20,7 +22,8 @@ function CustomMenuItem({
   active,
   onClick,
   color,
-}: MenuItemProps & { isCollapsed: boolean }) {
+  hoverColor,
+}: MenuItemProps & { isCollapsed: boolean; hoverColor?: string }) {
   return (
     <MenuItem
       icon={icon}
@@ -34,7 +37,7 @@ function CustomMenuItem({
         color: color || TEXT_FG,
         marginBottom: 10,
         "&:hover": {
-          color: PRIMARY_COLOR,
+          color: color || PRIMARY_COLOR,
         },
         ["." + menuClasses.icon]: {
           color: "gray",
@@ -47,7 +50,7 @@ function CustomMenuItem({
           borderRadius: "5px",
           backgroundColor: "white",
           "&:hover": {
-            backgroundColor: `${ACTIVE_COLOR} !important`,
+            backgroundColor: `${hoverColor || ACTIVE_COLOR} !important`,
           },
         },
         ["." + menuClasses.button + "." + menuClasses.active]: {
@@ -66,8 +69,13 @@ function Divider() {
 }
 
 export default function SideBar() {
+  const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState("");
   const { user } = useAppSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    dispatch(authActions.logout());
+  };
 
   return (
     <Sidebar style={{ height: "100vh", width: "200px" }}>
@@ -108,6 +116,8 @@ export default function SideBar() {
             icon={<img src={LogoutIcon} />}
             active={false}
             color="#D42B2B"
+            hoverColor={RED_HOVER}
+            onClick={handleLogout}
           >
             Logout
           </CustomMenuItem>

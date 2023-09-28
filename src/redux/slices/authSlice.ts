@@ -110,6 +110,13 @@ const authSlice = createSlice({
     updateLogoData: (state, action: PayloadAction<string | Blob | null>) => {
       state.profileData!.logo = action.payload;
     },
+    authenticateUser: (state) => {
+      state.isAuthenticated = true;
+    },
+    logout: () => {
+      localStorage.clear();
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder

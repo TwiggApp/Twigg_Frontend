@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import PastaImg from "../../assets/foods/pasta.svg";
 import AddButton from "../../components/Menu/AddButton";
 import MenuItem from "../../components/Menu/MenuItem";
@@ -10,14 +11,14 @@ import Button from "../../components/Button";
 import TextInput from "../../components/Form/TextInput";
 import Field from "../../components/Form/Field";
 import DropZone from "../../components/Form/DropZone";
-import * as yup from "yup";
+import Loader from "../../components/Loader";
 import { ICategory } from "../../types/menu";
 import { useValidator } from "../../hooks/useValidator";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { categoryActions } from "../../redux/slices/categorySlice";
 import { fileTest } from "../../utils/files";
-// import { ICloudinaryFile } from "../../types/auth";
-import Loader from "../../components/Loader";
+import { ICloudinaryFile } from "../../types/auth";
+import * as yup from "yup";
 
 const categorySchema = yup.object({
   name: yup
@@ -30,13 +31,13 @@ const categorySchema = yup.object({
 export default function Category() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
+
   const { loading, submitting, categories } = useAppSelector((state) => state.category);
 
   useEffect(() => {
-    if (!categories.length) {
-      dispatch(categoryActions.fetchCategories());
-    }
-  }, [dispatch, categories]);
+    dispatch(categoryActions.fetchCategories(location.state.menuId));
+  }, [location.state]);
 
   const [formData, setFormData] = useState<ICategory>({
     name: "",
@@ -47,9 +48,10 @@ export default function Category() {
   const { errors, validate, clearErrOnFocus } = useValidator(formData, categorySchema);
 
   const handleMenuItemClick = (category: string, categoryId: string) => {
-    navigate(`/dashboard/categories/${category}`, {
+    navigate(`/dashboard/categories/${categoryId}`, {
       state: {
-        categoryId,
+        category,
+        menuId: location.state.menuId,
       },
     });
   };
@@ -62,7 +64,11 @@ export default function Category() {
   const handleAddCategory = async () => {
     if (await validate()) {
       await dispatch(
-        categoryActions.createCategory({ name: formData.name, image: formData.image as string })
+        categoryActions.createCategory({
+          name: formData.name,
+          image: formData.image as string,
+          menuId: location.state.menuId,
+        })
       );
       setFormData({ name: "", image: "" });
       setModalVisible(false);
@@ -135,8 +141,7 @@ export default function Category() {
               categories.map((category, index) => {
                 const menu = {
                   name: category.name,
-                  // image: (category.image as ICloudinaryFile).secure_url || PastaImg,
-                  image: PastaImg,
+                  image: (category.image as ICloudinaryFile).secure_url || PastaImg,
                   subtitle: `${category.items || 0} items`,
                 };
                 return (

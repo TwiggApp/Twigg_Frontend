@@ -17,8 +17,8 @@ const initialState: CategoryState = {
 };
 
 const createCategory = createAsyncThunk(
-  "category/createCategory",
-  async ({ name, image }: { name: string; image: string }) => {
+  "/category/createCategory",
+  async ({ name, image, menuId }: { name: string; image: string; menuId: string }) => {
     const fileData = new FormData();
     const categoryFile = base64ToFile(image);
 
@@ -30,15 +30,15 @@ const createCategory = createAsyncThunk(
 
     const response = await apiClient.post("/category", {
       name,
+      menu: menuId,
       image: fileResponse,
     });
     return response.data;
   }
 );
 
-const fetchCategories = createAsyncThunk("category/fetchCategories", async () => {
-  const response = await apiClient.get("/category");
-  console.log(response.data);
+const fetchCategories = createAsyncThunk("category/fetchCategories", async (menuId: string) => {
+  const response = await apiClient.get(`/category?menu=${menuId}`);
   return response.data;
 });
 

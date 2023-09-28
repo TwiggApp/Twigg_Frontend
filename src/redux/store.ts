@@ -1,4 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import authSlice from "./slices/authSlice";
 import menuSlice from "./slices/menuSlice";
 import categorySlice from "./slices/categorySlice";
@@ -11,9 +13,20 @@ const rootReducer = combineReducers({
   food: foodItemSlice.reducer,
 });
 
+const persistedReducer = persistReducer(
+  {
+    key: "root",
+    storage,
+    whitelist: ["auth"],
+  },
+  rootReducer
+);
+
 export const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
 });
+
+export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;

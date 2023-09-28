@@ -1,8 +1,10 @@
 import { ICloudinaryFile } from "./auth";
 
 export interface IMenu {
+  _id?: string;
   name: string;
   description?: string;
+  business?: string;
   categories?: number;
   items?: number;
   date?: Date;
@@ -19,4 +21,5 @@ export interface IFood {
   name: string;
   price: string;
   image?: ICloudinaryFile | string;
+  images?: (ICloudinaryFile | string)[];
 }

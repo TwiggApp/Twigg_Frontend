@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useValidator } from "../../hooks/useValidator";
 import { IMenu } from "../../types/menu";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -13,12 +13,8 @@ import TextInput from "../../components/Form/TextInput";
 import Field from "../../components/Form/Field";
 import ModalHeader from "../../components/Modals/ModalHeader";
 import TextArea from "../../components/Form/TextArea";
+import Loader from "../../components/Loader";
 import * as yup from "yup";
-
-const menuItems = [
-  { id: 1, name: "Main menu", categories: 5, items: 20, date: new Date() },
-  { id: 2, name: "Kids menu", categories: 5, items: 20, date: new Date() },
-];
 
 function NoMenuItem({ onButtonClick }: { onButtonClick: () => void }) {
   return (
@@ -48,7 +44,11 @@ const createMenuSchema = yup.object({
 export default function Home() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { loading, menus } = useAppSelector((state) => state.menu);
+  const { loading, menus, submitting } = useAppSelector((state) => state.menu);
+
+  useEffect(() => {
+    dispatch(menuActions.fetchMenus());
+  }, [dispatch]);
 
   const [menuModal, setMenuModal] = useState(false);
   const [formData, setFormData] = useState<IMenu>({
@@ -58,12 +58,12 @@ export default function Home() {
 
   const { errors, validate, clearErrOnFocus } = useValidator(formData, createMenuSchema);
 
-  const [items, setItems] = useState<
-    { id: number; name: string; categories: number; items: number; date: Date }[]
-  >([]);
-
-  const handleMenuItemClick = () => {
-    navigate("/dashboard/categories");
+  const handleMenuItemClick = (menuId: string) => {
+    navigate("/dashboard/categories", {
+      state: {
+        menuId,
+      },
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -73,12 +73,13 @@ export default function Home() {
 
   const handleCreateMenuClick = async () => {
     if (await validate()) {
-      setItems([...items, menuItems[0]]);
+      await dispatch(menuActions.createMenu({ menu: formData }));
       setFormData({ name: "", description: "" });
       setMenuModal(false);
-      dispatch(menuActions.manualMenu(formData));
     }
   };
+
+  if (loading) return <Loader loading={loading} />;
 
   return (
     <>
@@ -111,7 +112,7 @@ export default function Home() {
               </div>
 
               <div className="mt-8">
-                <Button onClick={handleCreateMenuClick} loading={loading}>
+                <Button onClick={handleCreateMenuClick} loading={submitting}>
                   Create Menu
                 </Button>
               </div>
@@ -138,7 +139,7 @@ export default function Home() {
                   items={menuItem?.items}
                   date={menuItem?.date}
                   key={`menu-card-${index}`}
-                  onClick={handleMenuItemClick}
+                  onClick={() => handleMenuItemClick(menuItem._id!)}
                 />
               ))}
 
