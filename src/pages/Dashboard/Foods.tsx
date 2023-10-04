@@ -145,14 +145,14 @@ export default function Foods() {
       <div className="flex flex-col w-full h-full">
         <TopBar onPublishClick={() => setPublishModalVisible(true)} />
 
-        <div className="flex flex-col w-[100%] h-full px-16 py-6">
+        <div className="flex flex-col w-[100%] h-full px-16 max-md:px-6 py-6">
           <div className="flex flex-row h-[45px] w-[100%] items-center justify-between">
             <h1 className="text-primary text-[32px] font-bold">{location.state.category}</h1>
 
             <AddButton text="Add Food Item" onClick={() => setModalVisible(true)} />
           </div>
 
-          <div className="flex flex-wrap mt-10 gap-6">
+          <div className="flex flex-wrap mt-10 gap-6 max-md:flex-col">
             {!!foods.length &&
               foods.map((food, index) => {
                 const menu = {

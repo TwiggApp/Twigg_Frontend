@@ -125,7 +125,7 @@ export default function Home() {
         {menus.length === 0 ? (
           <NoMenuItem onButtonClick={() => setMenuModal(true)} />
         ) : (
-          <div className="h-[100%] w-[100%] px-16 pt-16">
+          <div className="h-[100%] w-[100%] px-16 max-md:px-6 pt-16 max-md:pt-6">
             <h1 className="text-primary text-[32px] font-bold">Dashboard</h1>
             <p className="font-nunito text-[#555]">Effortlessly create, manage, and share menus</p>
 

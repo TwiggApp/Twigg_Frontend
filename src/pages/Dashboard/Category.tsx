@@ -129,7 +129,7 @@ export default function Category() {
       <div className="flex flex-col h-[100vh]">
         <TopBar />
 
-        <div className="flex flex-col w-[100%] h-full px-16 py-6">
+        <div className="flex flex-col w-[100%] h-full px-16 max-md:px-6 py-6">
           <div className="flex flex-row h-[45px] w-[100%] items-center justify-between">
             <h1 className="text-primary text-[32px] font-bold">Categories</h1>
 
