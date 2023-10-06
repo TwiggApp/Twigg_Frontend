@@ -9,10 +9,10 @@ export default function Modal({ children, visible, setModalVisible }: ModalProps
     <>
       {visible && (
         <div
-          className="fixed z-50 top-0 left-0 right-0 bottom-0 w-full h-full bg-black bg-opacity-40 flex items-center justify-center"
+          className="fixed z-50 top-0 left-0 right-0 bottom-0 w-full h-full bg-black bg-opacity-40 flex items-end md:items-center justify-center"
           onClick={() => setModalVisible(false)}
         >
-          <div className="-translate-y-20" onClick={(e) => e.stopPropagation()}>
+          <div className="md:-translate-y-20" onClick={(e) => e.stopPropagation()}>
             {children}
           </div>
         </div>

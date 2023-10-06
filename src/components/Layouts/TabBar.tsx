@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAppSelector } from "../../redux/hooks";
+import { useNavigate } from "react-router-dom";
 
 const Menus = ({ active }: { active: boolean }) => {
   return (
@@ -59,14 +60,22 @@ const LogoutSvg = () => {
 };
 
 export default function TabBar() {
+  const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState<"home" | "categories" | "settings">("home");
+
+  const handleTabClick = (activeTab: "home") => {
+    setActiveTab(activeTab);
+    if (activeTab === "home") {
+      navigate("/dashboard");
+    }
+  };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full h-[82px] bg-white shadow-lg">
+    <div className="fixed bottom-0 left-0 w-full h-[82px] bg-white shadow-lg z-50">
       <div className="w-full h-[82px] flex items-center justify-between px-10">
-        <div className="cursor-pointer" onClick={() => setActiveTab("home")}>
+        <div className="cursor-pointer" onClick={() => handleTabClick("home")}>
           <Dashboard active={activeTab === "home"} />
         </div>
         <div className="cursor-pointer" onClick={() => setActiveTab("categories")}>

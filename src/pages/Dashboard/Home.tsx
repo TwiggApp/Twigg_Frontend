@@ -47,8 +47,10 @@ export default function Home() {
   const { loading, menus, submitting } = useAppSelector((state) => state.menu);
 
   useEffect(() => {
-    dispatch(menuActions.fetchMenus());
-  }, [dispatch]);
+    if (!menus.length) {
+      dispatch(menuActions.fetchMenus());
+    }
+  }, [dispatch, menus]);
 
   const [menuModal, setMenuModal] = useState(false);
   const [formData, setFormData] = useState<IMenu>({
@@ -84,8 +86,8 @@ export default function Home() {
   return (
     <>
       <Modal visible={menuModal} setModalVisible={setMenuModal}>
-        <div className="w-[522px] min-h-[513px] bg-white rounded-md shadow-md px-10 pt-10 pb-14 flex flex-col items-center">
-          <div className="flex flex-col h-[100%]">
+        <div className="w-[522px] max-md:w-screen min-h-[513px] max-md:min-h-[70vh] bg-white rounded-md max-md:rounded-tl-3xl max-md:rounded-tr-3xl max-md:translate-y-4 shadow-md px-10 pt-10 pb-14 flex flex-col items-center">
+          <div className="flex flex-col h-[100%] max-md:w-full">
             <ModalHeader title="Create a new menu" onClick={() => setMenuModal(false)} />
 
             <div className="h-[100%]">

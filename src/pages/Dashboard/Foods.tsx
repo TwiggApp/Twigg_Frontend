@@ -89,8 +89,8 @@ export default function Foods() {
       <QRModal visible={publishModalVisible} setModalVisible={setPublishModalVisible} />
 
       <Modal visible={modalVisible} setModalVisible={setModalVisible}>
-        <div className="w-[522px] min-h-[595px] bg-white rounded-md shadow-md px-10 pt-10 pb-14 flex flex-col items-center">
-          <div className="flex flex-col h-[100%]">
+        <div className="w-[522px] max-md:w-screen min-h-[595px] max-md:min-h-[85vh] max-md:overflow-y-auto bg-white rounded-md max-md:rounded-tl-3xl max-md:rounded-tr-3xl max-md:translate-y-4 shadow-md px-10 pt-10 pb-14 flex flex-col items-center">
+          <div className="flex flex-col h-[100%] max-md:w-full">
             <ModalHeader title="Add a food item" onClick={() => setModalVisible(false)} />
 
             <div className="h-[100%] w-[100%]">
