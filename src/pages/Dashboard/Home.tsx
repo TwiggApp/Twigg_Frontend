@@ -19,7 +19,7 @@ import * as yup from "yup";
 function NoMenuItem({ onButtonClick }: { onButtonClick: () => void }) {
   return (
     <div className="flex h-[100%] w-[100%] items-center justify-center">
-      <div className="-translate-y-40 -translate-x-10 flex flex-col gap-12 items-center justify-center min-w-[500px]">
+      <div className="md:-translate-y-40 md:-translate-x-10 flex flex-col gap-12 items-center justify-center min-w-[500px]">
         <img src={NoMenuSvg} alt="No Menu" />
         <div className="text-center">
           <h1 className="text-[32px] font-bold text-primary mb-2">No menus yet</h1>

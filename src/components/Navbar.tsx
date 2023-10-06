@@ -63,45 +63,44 @@ export default function Navbar() {
             <Link to="/login">Log in</Link>
           </p>
 
-          <p className="px-4 py-2 rounded-md bg-primary cursor-pointer text-white">
-            <Link to="/register">Get Started</Link>
-          </p>
+          <Link to="/register">
+            <p className="px-4 py-2 rounded-md bg-primary cursor-pointer text-white">Get Started</p>
+          </Link>
         </div>
 
         <div className="hidden max-md:block" onClick={handleShowMenu}>
           <img src={Hamburger} alt="hamburger_icon" />
         </div>
-
-        {menuVisible && (
-          <div className="fixed top-0 left-0 w-screen min-h-screen overflow-y-auto flex flex-col bg-white z-50 px-10 py-4">
-            <div className="flex justify-between items-center mb-12">
-              <img src={Logo} alt="twigg-logo" />
-              <div onClick={handleCloseMenu}>
-                <img src={CloseX} alt="close-x" />
-              </div>
-            </div>
-            <ul className="flex flex-col gap-8 w-[100%]">
-              {MOBILE_MENU_ITEMS.map((menuItem, index) => (
-                <li
-                  className="font-nunito text-[21px] border-b-[1px] border-[#EBEBEB] py-6"
-                  key={`menu-item-${index}`}
-                >
-                  <NavLink
-                    to={menuItem.link}
-                    className={({ isActive }) => (isActive ? "text-primary" : "text-[#222]")}
-                  >
-                    {menuItem.text}
-                  </NavLink>
-                </li>
-              ))}
-
-              <div className="mt-6 w-[100%]">
-                <Button onClick={() => navigate("/register")}>Get Started</Button>
-              </div>
-            </ul>
-          </div>
-        )}
       </nav>
+      {menuVisible && (
+        <div className="absolute top-0 left-0 w-screen h-[100vh] overflow-y-auto flex flex-col bg-white z-[9999] px-8 py-4">
+          <div className="flex justify-between items-center mb-12">
+            <img src={Logo} alt="twigg-logo" />
+            <div onClick={handleCloseMenu}>
+              <img src={CloseX} alt="close-x" />
+            </div>
+          </div>
+          <ul className="flex flex-col gap-8 w-[100%]">
+            {MOBILE_MENU_ITEMS.map((menuItem, index) => (
+              <li
+                className="font-nunito text-[21px] border-b-[1px] border-[#EBEBEB] py-6"
+                key={`menu-item-${index}`}
+              >
+                <NavLink
+                  to={menuItem.link}
+                  className={({ isActive }) => (isActive ? "text-primary" : "text-[#222]")}
+                >
+                  {menuItem.text}
+                </NavLink>
+              </li>
+            ))}
+
+            <div className="mt-6 w-[100%]">
+              <Button onClick={() => navigate("/register")}>Get Started</Button>
+            </div>
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

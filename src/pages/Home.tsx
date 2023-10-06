@@ -42,7 +42,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-gray-bg">
+    <div className="bg-gray-bg relative overflow-hidden">
       <div className="max-container">
         <Navbar />
 
