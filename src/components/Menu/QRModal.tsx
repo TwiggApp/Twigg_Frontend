@@ -51,7 +51,7 @@ export default function QRModal({ visible, setModalVisible }: QRModalProps) {
             <div className="w-[112px] h-[112px] mb-6 relative">
               <QRCode
                 size={256}
-                value={`https://twigg-frontend/restaurants/${1}`}
+                value={`https://twigg-frontend.vercel.app/restaurants/${1}`}
                 style={{ height: "auto", width: "100%", maxWidth: "100%" }}
               />
               <div className="absolute -right-3 -bottom-3">
