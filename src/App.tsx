@@ -13,6 +13,7 @@ import SidebarLayout from "./components/Layouts/SidebarLayout";
 import NotPrivateRoute from "./components/NonPrivateRoute";
 import Category from "./pages/Dashboard/Category";
 import Foods from "./pages/Dashboard/Foods";
+import RestaurantHome from "./pages/Restaurants/Home";
 import "./App.css";
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="" element={<Home />} />
+          <Route path="/restaurants/:restaurantId" element={<RestaurantHome />} />
           <Route element={<NotPrivateRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
