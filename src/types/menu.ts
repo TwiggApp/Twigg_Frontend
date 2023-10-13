@@ -23,3 +23,9 @@ export interface IFood {
   image?: ICloudinaryFile | string;
   images?: (ICloudinaryFile | string)[];
 }
+
+// Menu Items with Category and Food
+export interface ICategoryFood {
+  category: string;
+  items: IFood[];
+}

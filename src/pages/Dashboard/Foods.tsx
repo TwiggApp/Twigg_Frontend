@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useValidator } from "../../hooks/useValidator";
 import { IFood } from "../../types/menu";
 import { fileTest } from "../../utils/files";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { foodActions } from "../../redux/slices/foodItemSlice";
+import { ICloudinaryFile } from "../../types/auth";
 import TopBar from "../../components/Menu/TopBar";
 import AddButton from "../../components/Menu/AddButton";
 import MenuItem from "../../components/Menu/MenuItem";
@@ -14,11 +17,8 @@ import TextInput from "../../components/Form/TextInput";
 import Button from "../../components/Button";
 import DropZone from "../../components/Form/DropZone";
 import Loader from "../../components/Loader";
-import * as yup from "yup";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { foodActions } from "../../redux/slices/foodItemSlice";
-import { ICloudinaryFile } from "../../types/auth";
 import QRModal from "../../components/Menu/QRModal";
+import * as yup from "yup";
 
 const foodSchema = yup.object({
   name: yup
@@ -142,12 +142,14 @@ export default function Foods() {
         </div>
       </Modal>
 
-      <div className="flex flex-col w-full h-full">
+      <div className="flex flex-col w-full h-full max-h-full overflow-hidden">
         <TopBar onPublishClick={() => setPublishModalVisible(true)} />
 
-        <div className="flex flex-col w-[100%] h-full px-16 max-md:px-6 py-6">
+        <div className="flex flex-col w-[100%] h-full px-16 max-md:px-6 py-6 max-md:overflow-y-auto max-md:pb-28">
           <div className="flex flex-row h-[45px] w-[100%] items-center justify-between">
-            <h1 className="text-primary text-[32px] font-bold">{location.state.category}</h1>
+            <h1 className="text-primary text-[32px] max-md:text-[26px] font-bold">
+              {location.state.category}
+            </h1>
 
             <AddButton text="Add Food Item" onClick={() => setModalVisible(true)} />
           </div>

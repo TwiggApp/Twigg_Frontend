@@ -2,6 +2,7 @@ import QRCode from "react-qr-code";
 import Modal from "../Modals/Modal";
 import ModalHeader from "../Modals/ModalHeader";
 import Button from "../Button";
+import { useAppSelector } from "../../redux/hooks";
 
 const CheckSvg = () => {
   return (
@@ -41,6 +42,9 @@ interface QRModalProps {
 }
 
 export default function QRModal({ visible, setModalVisible }: QRModalProps) {
+  const { user } = useAppSelector((state) => state.auth);
+  const { selectedMenu } = useAppSelector((state) => state.menu);
+
   return (
     <Modal visible={visible} setModalVisible={setModalVisible}>
       <div className="w-[482px] max-md:w-screen h-[513px] max-md:min-h-[70vh] bg-white rounded-md max-md:rounded-tl-3xl max-md:rounded-tr-3xl max-md:translate-y-4 shadow-md px-10 pt-10 pb-14 flex flex-col items-center">
@@ -51,7 +55,9 @@ export default function QRModal({ visible, setModalVisible }: QRModalProps) {
             <div className="w-[112px] h-[112px] mb-6 relative">
               <QRCode
                 size={256}
-                value={`https://twigg-frontend.vercel.app/restaurants/${1}`}
+                value={`${import.meta.env.VITE_FRONTEND_URL}/restaurants?business=${
+                  user?._id
+                }&menu=${selectedMenu}`}
                 style={{ height: "auto", width: "100%", maxWidth: "100%" }}
               />
               <div className="absolute -right-3 -bottom-3">

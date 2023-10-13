@@ -7,6 +7,7 @@ interface MenuState {
   loading: boolean;
   submitting: boolean;
   error: string;
+  selectedMenu: string;
 }
 
 const initialState: MenuState = {
@@ -14,6 +15,7 @@ const initialState: MenuState = {
   loading: false,
   submitting: false,
   error: "",
+  selectedMenu: "",
 };
 
 const createMenu = createAsyncThunk(
@@ -35,6 +37,9 @@ const menuSlice = createSlice({
   reducers: {
     manualMenu: (state, action: PayloadAction<IMenu>) => {
       state.menus.push(action.payload);
+    },
+    selectMenu: (state, action: PayloadAction<{ menuId: string }>) => {
+      state.selectedMenu = action.payload.menuId;
     },
   },
   extraReducers: (builder) => {

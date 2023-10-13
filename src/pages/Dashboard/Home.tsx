@@ -61,6 +61,7 @@ export default function Home() {
   const { errors, validate, clearErrOnFocus } = useValidator(formData, createMenuSchema);
 
   const handleMenuItemClick = (menuId: string) => {
+    dispatch(menuActions.selectMenu({ menuId }));
     navigate("/dashboard/categories", {
       state: {
         menuId,
@@ -123,17 +124,17 @@ export default function Home() {
         </div>
       </Modal>
 
-      <div className="flex h-[100vh]">
+      <div className="flex h-[100vh] max-h-[100vh] overflow-hidden">
         {menus.length === 0 ? (
           <NoMenuItem onButtonClick={() => setMenuModal(true)} />
         ) : (
-          <div className="h-[100%] w-[100%] px-16 max-md:px-6 pt-16 max-md:pt-6">
+          <div className="h-[100%] w-[100%] px-16 max-md:px-6 pt-16 max-md:pt-6 overflow-auto">
             <h1 className="text-primary text-[32px] font-bold">Dashboard</h1>
             <p className="font-nunito text-[#555]">Effortlessly create, manage, and share menus</p>
 
             <h2 className="text-[20px] text-[#555] font-nunito mt-16">Your menus</h2>
 
-            <div className="flex flex-row flex-wrap mt-6 gap-4">
+            <div className="flex flex-row flex-wrap mt-6 gap-4 max-md:pb-28 max-md:overflow-y-auto">
               {menus.map((menuItem, index) => (
                 <MenuCard
                   name={menuItem.name}

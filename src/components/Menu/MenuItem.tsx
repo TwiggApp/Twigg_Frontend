@@ -11,7 +11,7 @@ interface MenuItemProps {
 
 export default function MenuItem({ menuItem, onClick }: MenuItemProps) {
   return (
-    <div className="bg-white w-[205px] h-[209px] rounded-md flex flex-col shadow-sm overflow-hidden relative">
+    <div className="bg-white w-[205px] max-sm:w-full h-[209px] rounded-md flex flex-col shadow-sm overflow-hidden relative">
       <div
         className="absolute top-1 right-1 p-2 cursor-pointer"
         onClick={() => onClick && onClick()}

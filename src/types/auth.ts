@@ -25,6 +25,15 @@ export interface IBusinessProfile {
   _id: string;
 }
 
+export interface IBusiness {
+  name: string;
+  email: string;
+  logo: ICloudinaryFile | string | null;
+  instagram?: string;
+  tiktok?: string;
+  _id: string;
+}
+
 export interface BusinessDetails {
   country: string;
   state: string;
