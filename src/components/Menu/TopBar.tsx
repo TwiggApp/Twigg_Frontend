@@ -14,12 +14,12 @@ export default function TopBar({ onPublishClick }: TopBarProps) {
 
       <div className="flex flex-row gap-3">
         {!isMobile && (
-          <Button inverted width="121px" height="100px">
+          <Button inverted width="121px" height="55px">
             Save Changes
           </Button>
         )}
 
-        <Button width={`${isMobile ? "100px" : "121px"}`} height="50px" onClick={onPublishClick}>
+        <Button width={`${isMobile ? "100px" : "121px"}`} height="55px" onClick={onPublishClick}>
           Publish
         </Button>
       </div>

@@ -1,7 +1,7 @@
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useLayoutEffect } from "react";
-import { useAppDispatch } from "./redux/hooks";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { authActions } from "./redux/slices/authSlice";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
@@ -14,16 +14,21 @@ import NotPrivateRoute from "./components/NonPrivateRoute";
 import Category from "./pages/Dashboard/Category";
 import Foods from "./pages/Dashboard/Foods";
 import RestaurantHome from "./pages/Restaurant/Home";
-import "./App.css";
+import Verify from "./pages/Verify";
+import NotFound from "./pages/NotFound";
+import AuthorizedRoute from "./components/AuthorizedRoute";
 
 function App() {
   const dispatch = useAppDispatch();
+  const { profileComplete } = useAppSelector((state) => state.auth);
 
   useLayoutEffect(() => {
-    if (localStorage.getItem("authToken")) {
+    if (localStorage.getItem("authToken") && profileComplete) {
       dispatch(authActions.authenticateUser());
+    } else {
+      dispatch(authActions.logout());
     }
-  }, [dispatch]);
+  }, [dispatch, profileComplete]);
 
   return (
     <>
@@ -32,9 +37,14 @@ function App() {
         <Routes>
           <Route path="" element={<Home />} />
           <Route path="/restaurants" element={<RestaurantHome />} />
+
           <Route element={<NotPrivateRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verify/:token" element={<Verify />} />
+          </Route>
+
+          <Route element={<AuthorizedRoute />}>
             <Route path="/create-profile" element={<CreateProfile />} />
           </Route>
 
@@ -47,6 +57,8 @@ function App() {
               </Route>
             </Route>
           </Route>
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>

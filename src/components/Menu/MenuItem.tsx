@@ -18,8 +18,12 @@ export default function MenuItem({ menuItem, onClick }: MenuItemProps) {
       >
         <img src={Dots} alt="menu-icon" />
       </div>
-      <div className="flex-1">
-        <img src={menuItem.image} alt="menu-item-image" className="w-[100%] h-[100%]" />
+      <div className="h-[50%]">
+        <img
+          src={menuItem.image}
+          alt="menu-item-image"
+          className="w-[100%] h-[100%] object-cover"
+        />
       </div>
       <div className="flex-1 p-4">
         <h1 className="font-nunito text-[18px] text-gray">{menuItem.name}</h1>

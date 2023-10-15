@@ -1,7 +1,8 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { apiClient } from "../../api/apiClient";
-import { ICloudinaryFile, IUser, LoginData, RegisterData } from "../../types/auth";
+import { IBusiness, ICloudinaryFile, IUser, LoginData, RegisterData } from "../../types/auth";
 import { base64ToFile } from "../../utils/files";
+import toast from "react-hot-toast";
 
 type Role = "owner" | "employee" | "manager" | string;
 
@@ -28,6 +29,7 @@ interface AuthState {
   token: string;
   profileData: ProfileData;
   isAuthenticated: boolean;
+  profileComplete: boolean;
 }
 
 const initialState: AuthState = {
@@ -35,6 +37,7 @@ const initialState: AuthState = {
   error: "",
   user: null,
   token: "",
+  profileComplete: false,
   profileData: {
     country: "",
     state: "",
@@ -123,11 +126,13 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<{ magicToken: string }>) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
         state.error = "";
-        state.token = action.payload.magicToken;
-        localStorage.setItem("magicToken", state.token);
+        toast.success("Check your email to verify your account", {
+          position: "top-right",
+          duration: 4000,
+        });
       })
       .addCase(registerUser.rejected, (state) => {
         state.loading = false;
@@ -136,15 +141,13 @@ const authSlice = createSlice({
       .addCase(createProfile.pending, (state) => {
         state.loading = true;
       })
-      .addCase(createProfile.fulfilled, (state) => {
+      .addCase(createProfile.fulfilled, (state, action: PayloadAction<{ business: IBusiness }>) => {
         state.loading = false;
-        const magicToken = localStorage.getItem("magicToken");
+        state.profileComplete = true;
+        state.isAuthenticated = true;
 
-        // Remove the magic token key and replace with authToken
-        if (magicToken) {
-          localStorage.removeItem("magicToken");
-          localStorage.setItem("authToken", magicToken);
-        }
+        state.user!._id = action.payload.business._id;
+        state.user!.logo = action.payload.business.logo as ICloudinaryFile;
       })
       .addCase(createProfile.rejected, (state) => {
         state.loading = false;
@@ -159,12 +162,14 @@ const authSlice = createSlice({
           action: PayloadAction<{
             accessToken: string;
             data: IUser;
+            profileComplete: boolean;
           }>
         ) => {
           state.loading = false;
           state.user = action.payload.data;
           state.token = action.payload.accessToken;
-          state.isAuthenticated = true;
+          state.profileComplete = action.payload.data.profileComplete!;
+          state.isAuthenticated = action.payload.data.profileComplete!;
           localStorage.setItem("authToken", action.payload.accessToken);
         }
       )

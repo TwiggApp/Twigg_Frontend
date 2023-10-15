@@ -16,6 +16,7 @@ export interface IUser {
   email: string;
   logo: ICloudinaryFile | null;
   _id: string;
+  profileComplete?: boolean;
 }
 
 export interface IBusinessProfile {

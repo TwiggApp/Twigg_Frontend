@@ -6,10 +6,10 @@ import Button from "../components/Button";
 import Eye from "../assets/eye.svg";
 import EyeShut from "../assets/eye-shut.svg";
 import Field from "../components/Form/Field";
-import * as yup from "yup";
 import { useValidator } from "../hooks/useValidator";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { authActions } from "../redux/slices/authSlice";
+import * as yup from "yup";
 
 const loginSchema = yup.object({
   email: yup.string().email("Email must be a valid email").required("Email is required"),
@@ -19,6 +19,7 @@ const loginSchema = yup.object({
 export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { profileComplete } = useAppSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -37,7 +38,12 @@ export default function Login() {
   const handleSubmit = async () => {
     if (await validate()) {
       await dispatch(authActions.loginUser({ formData }));
-      navigate("/dashboard");
+
+      if (profileComplete) {
+        navigate("/dashboard");
+      } else {
+        navigate("/create-profile");
+      }
     }
   };
 

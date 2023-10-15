@@ -154,6 +154,8 @@ export default function Home() {
                 <p className="font-nunito mt-4 text-[#555] text-[18px]">New Menu</p>
               </div>
             </div>
+
+            <div className="max-sm:h-[30px]"></div>
           </div>
         )}
       </div>

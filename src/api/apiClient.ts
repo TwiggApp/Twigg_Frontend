@@ -25,7 +25,7 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (isAxiosError(error)) {
-      // console.log(error.response?.data);
+      console.log(error.response?.data);
       if (error.response?.data?.message === "Vaidation Failure") {
         toast.error(Object.values(error.response?.data?.validationErrors as object)[0], {
           position: "top-right",
@@ -33,7 +33,7 @@ apiClient.interceptors.response.use(
       }
 
       if (error.response?.status === 401) {
-        toast.error("Invalid Token", { position: "top-right" });
+        toast.error(error.response?.data.message, { position: "top-right" });
 
         const dispatch = useAppDispatch();
         dispatch(authActions.logout());

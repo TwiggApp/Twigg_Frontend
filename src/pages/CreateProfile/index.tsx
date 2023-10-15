@@ -28,7 +28,7 @@ export default function CreateProfile() {
       next();
     } else {
       await dispatch(authActions.createProfile({ formData: profileData }));
-      navigate("/login");
+      navigate("/dashboard");
     }
   };
 

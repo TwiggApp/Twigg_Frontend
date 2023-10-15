@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import TextInput from "../components/Form/TextInput";
 import Button from "../components/Button";
 import Eye from "../assets/eye.svg";
 import EyeShut from "../assets/eye-shut.svg";
 import Field from "../components/Form/Field";
-import * as yup from "yup";
 import { useValidator } from "../hooks/useValidator";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { authActions } from "../redux/slices/authSlice";
 import { RegisterData } from "../types/auth";
+import * as yup from "yup";
 
 const userSchema = yup.object({
   name: yup.string().required("Business name is required"),
@@ -23,9 +23,9 @@ const userSchema = yup.object({
 });
 
 export default function Register() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { token } = useAppSelector((state) => state.auth);
+  // const { token } = useAppSelector((state) => state.auth);
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -44,12 +44,12 @@ export default function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
-  useEffect(() => {
-    if (token) {
-      dispatch(authActions.verifyToken({ token }));
-      navigate("/create-profile");
-    }
-  }, [token, dispatch, navigate]);
+  // useEffect(() => {
+  //   if (token) {
+  //     dispatch(authActions.verifyToken({ token }));
+  //     navigate("/create-profile");
+  //   }
+  // }, [token, dispatch, navigate]);
 
   const handleSubmit = async () => {
     if (await validate()) {
