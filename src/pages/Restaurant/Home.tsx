@@ -13,8 +13,8 @@ function FoodItem({ foodItem }: { foodItem: IFood }) {
   const image = foodItem.images![0] as ICloudinaryFile;
 
   return (
-    <div className="flex gap-3 p-4 bg-white border-b-[1px] border-gray-200">
-      <div className="w-[102px] h-[102px] rounded-md overflow-hidden">
+    <div className="flex gap-3 p-4 bg-white border-b-[1px] border-gray-200 min-h-[120px]">
+      <div className="min-w-[102px] max-w-[102px] h-[102px] rounded-md overflow-hidden">
         <img src={image.secure_url} alt="food image" className="object-cover w-full h-full" />
       </div>
       <div className="flex flex-col justify-evenly">
@@ -147,14 +147,14 @@ export default function Home() {
       >
         {categories.map((category, index) => (
           <div
-            className={`min-w-[92px] px-[10px] py-[6px] font-nunito text-center rounded-full mx-2 ${
+            className={`min-w-fit px-[10px] py-[6px] font-nunito text-center rounded-full mx-2 ${
               activeCategory === category && "bg-green-100 text-green-900"
             }`}
             key={`category-${index}`}
             id={`tab-${category}`}
             onClick={() => handleCategoryClick(category)}
           >
-            {category}
+            <p className="w-full whitespace-nowrap">{category}</p>
           </div>
         ))}
       </div>

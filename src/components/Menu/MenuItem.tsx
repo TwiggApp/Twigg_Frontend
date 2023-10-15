@@ -26,7 +26,9 @@ export default function MenuItem({ menuItem, onClick }: MenuItemProps) {
         />
       </div>
       <div className="flex-1 p-4">
-        <h1 className="font-nunito text-[18px] text-gray">{menuItem.name}</h1>
+        <h1 className="font-nunito text-[18px] text-gray text-ellipsis overflow-hidden w-full whitespace-nowrap">
+          {menuItem.name}
+        </h1>
         <p className="mt-4 font-nunito text-[14px] text-primary">{menuItem.subtitle}</p>
       </div>
     </div>
