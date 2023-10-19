@@ -158,19 +158,28 @@ const authSlice = createSlice({
       .addCase(
         loginUser.fulfilled,
         (
-          state,
+          _state,
           action: PayloadAction<{
             accessToken: string;
             data: IUser;
             profileComplete: boolean;
           }>
         ) => {
-          state.loading = false;
-          state.user = action.payload.data;
-          state.token = action.payload.accessToken;
-          state.profileComplete = action.payload.data.profileComplete!;
-          state.isAuthenticated = action.payload.data.profileComplete!;
+          localStorage.clear();
+
+          const newState: AuthState = {
+            loading: false,
+            user: action.payload.data,
+            token: action.payload.accessToken,
+            profileComplete: action.payload.data.profileComplete!,
+            isAuthenticated: action.payload.data.profileComplete!,
+            error: "",
+            profileData: {} as ProfileData,
+          };
+
           localStorage.setItem("authToken", action.payload.accessToken);
+
+          return newState;
         }
       )
       .addCase(loginUser.rejected, (state) => {

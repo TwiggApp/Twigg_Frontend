@@ -47,10 +47,8 @@ export default function Home() {
   const { loading, menus, submitting } = useAppSelector((state) => state.menu);
 
   useEffect(() => {
-    if (!menus.length) {
-      dispatch(menuActions.fetchMenus());
-    }
-  }, [dispatch, menus]);
+    dispatch(menuActions.fetchMenus());
+  }, [dispatch]);
 
   const [menuModal, setMenuModal] = useState(false);
   const [formData, setFormData] = useState<IMenu>({
