@@ -17,6 +17,7 @@ import RestaurantHome from "./pages/Restaurant/Home";
 import Verify from "./pages/Verify";
 import NotFound from "./pages/NotFound";
 import AuthorizedRoute from "./components/AuthorizedRoute";
+import Success from "./pages/Success";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -41,6 +42,7 @@ function App() {
           <Route element={<NotPrivateRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/register/success" element={<Success />} />
             <Route path="/verify/:token" element={<Verify />} />
           </Route>
 

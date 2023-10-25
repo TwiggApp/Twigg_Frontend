@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import TextInput from "../components/Form/TextInput";
 import Button from "../components/Button";
@@ -23,9 +23,8 @@ const userSchema = yup.object({
 });
 
 export default function Register() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  // const { token } = useAppSelector((state) => state.auth);
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -44,18 +43,14 @@ export default function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
-  // useEffect(() => {
-  //   if (token) {
-  //     dispatch(authActions.verifyToken({ token }));
-  //     navigate("/create-profile");
-  //   }
-  // }, [token, dispatch, navigate]);
-
   const handleSubmit = async () => {
     if (await validate()) {
-      await dispatch(authActions.registerUser({ formData }));
-      // await dispatch(authActions.verifyToken({ token }));
-      // navigate("/create-profile");
+      const registerAction = await dispatch(authActions.registerUser({ formData }));
+
+      // On success register, navigate user to success screen
+      if (authActions.registerUser.fulfilled.match(registerAction)) {
+        navigate("/register/success");
+      }
     }
   };
 
