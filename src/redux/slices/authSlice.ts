@@ -2,15 +2,16 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { apiClient } from "../../api/apiClient";
 import { IBusiness, ICloudinaryFile, IUser, LoginData, RegisterData } from "../../types/auth";
 import { base64ToFile } from "../../utils/files";
-import toast from "react-hot-toast";
+import { ICountry } from "country-state-city";
 
 type Role = "owner" | "employee" | "manager" | string;
 
 interface ProfileData {
-  country: string;
+  country: ICountry | string;
   state: string;
   businessPhoneNumber: string;
   logo: string | Blob | ICloudinaryFile | null;
+  backgroundImage: string | Blob | ICloudinaryFile | null;
   contactEmail: string;
   contactName: string;
   contactNumber: string;
@@ -39,10 +40,11 @@ const initialState: AuthState = {
   token: "",
   profileComplete: false,
   profileData: {
-    country: "",
+    country: {} as ICountry,
     state: "",
     businessPhoneNumber: "",
     logo: null,
+    backgroundImage: null,
     contactEmail: "",
     contactName: "",
     contactRole: "",
@@ -55,50 +57,6 @@ const initialState: AuthState = {
   },
   isAuthenticated: false,
 };
-
-export const createProfile = createAsyncThunk(
-  "auth/createProfile",
-  async ({ formData }: { formData: object }) => {
-    const fileData = new FormData();
-    const logoFile = base64ToFile((formData as { logo: string }).logo);
-    const newForm: ProfileData = { ...(formData as ProfileData) };
-
-    if (logoFile) {
-      fileData.append("file", logoFile);
-      const fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
-      newForm.logo = fileResponse.data;
-    }
-
-    newForm.contactRole = newForm.contactRole.toLowerCase();
-
-    const response = await apiClient.put("/auth/profile", newForm);
-    return response.data;
-  }
-);
-
-export const registerUser = createAsyncThunk(
-  "auth/register",
-  async ({ formData }: { formData: RegisterData }) => {
-    const response = await apiClient.post("/auth/signup", formData);
-    return response.data;
-  }
-);
-
-export const loginUser = createAsyncThunk(
-  "auth/login",
-  async ({ formData }: { formData: LoginData }) => {
-    const response = await apiClient.post("/auth/login", formData);
-    return response.data;
-  }
-);
-
-export const verifyToken = createAsyncThunk(
-  "auth/verifyToken",
-  async ({ token }: { token: string }) => {
-    const response = await apiClient.post("/auth/verify", { token });
-    return response.data;
-  }
-);
 
 const authSlice = createSlice({
   name: "auth",
@@ -116,9 +74,14 @@ const authSlice = createSlice({
     authenticateUser: (state) => {
       state.isAuthenticated = true;
     },
-    logout: () => {
+    logout: (state) => {
       localStorage.clear();
-      return initialState;
+      state.isAuthenticated = false;
+      state.user = null;
+      state.token = "";
+      state.loading = false;
+      state.profileComplete = false;
+      state.profileData = { ...initialState.profileData };
     },
   },
   extraReducers: (builder) => {
@@ -129,10 +92,6 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
         state.error = "";
-        toast.success("Check your email to verify your account", {
-          position: "top-right",
-          duration: 4000,
-        });
       })
       .addCase(registerUser.rejected, (state) => {
         state.loading = false;
@@ -166,6 +125,7 @@ const authSlice = createSlice({
           }>
         ) => {
           localStorage.clear();
+          console.log("LOGIN INFO:", action.payload);
 
           const newState: AuthState = {
             loading: false,
@@ -187,6 +147,61 @@ const authSlice = createSlice({
       });
   },
 });
+
+export const createProfile = createAsyncThunk(
+  "auth/createProfile",
+  async ({ formData }: { formData: object }) => {
+    const fileData = new FormData();
+    const logoFile = base64ToFile((formData as { logo: string }).logo);
+    const backgroundImage = base64ToFile((formData as { backgroundImage: string }).backgroundImage);
+
+    const newForm: ProfileData = { ...(formData as ProfileData) };
+
+    if (logoFile) {
+      fileData.append("file", logoFile);
+      const fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
+      newForm.logo = fileResponse.data;
+    }
+
+    if (backgroundImage) {
+      fileData.append("file", backgroundImage);
+      const fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
+      newForm.backgroundImage = fileResponse.data;
+    }
+
+    newForm.contactRole = newForm.contactRole.toLowerCase();
+    newForm.businessPhoneNumber =
+      (newForm.country as ICountry).phonecode + newForm.businessPhoneNumber;
+    newForm.country = (newForm.country as ICountry).name;
+
+    const response = await apiClient.put("/auth/profile", newForm);
+    return response.data;
+  }
+);
+
+export const registerUser = createAsyncThunk(
+  "auth/register",
+  async ({ formData }: { formData: RegisterData }) => {
+    const response = await apiClient.post("/auth/signup", formData);
+    return response.data;
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async ({ formData }: { formData: LoginData }) => {
+    const response = await apiClient.post("/auth/login", formData);
+    return response.data;
+  }
+);
+
+export const verifyToken = createAsyncThunk(
+  "auth/verifyToken",
+  async ({ token }: { token: string }) => {
+    const response = await apiClient.post("/auth/verify", { token });
+    return response.data;
+  }
+);
 
 export const authActions = {
   ...authSlice.actions,

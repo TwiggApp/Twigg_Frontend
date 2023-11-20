@@ -1,3 +1,5 @@
+import { ICountry } from "country-state-city";
+
 export interface RegisterData {
   name: string;
   email: string;
@@ -11,12 +13,18 @@ export interface LoginData {
 }
 
 export interface IUser {
+  _id: string;
   name: string;
-  phoneNumber?: string;
   email: string;
   logo: ICloudinaryFile | null;
-  _id: string;
+  phoneNumber?: string;
   profileComplete?: boolean;
+  country: string | ICountry;
+  state: string;
+  instagram?: string;
+  whatsapp?: string;
+  tiktok?: string;
+  facebook?: string;
 }
 
 export interface IBusinessProfile {
@@ -36,10 +44,11 @@ export interface IBusiness {
 }
 
 export interface BusinessDetails {
-  country: string;
+  country: ICountry | string;
   state: string;
   businessPhoneNumber: string;
   logo: ICloudinaryFile | string | Blob | null;
+  backgroundImage: ICloudinaryFile | string | Blob | null;
 }
 
 export interface Contact {

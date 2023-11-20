@@ -2,12 +2,14 @@ import Field from "../../components/Form/Field";
 import Dropdown from "../../components/Form/Dropdown";
 import TextInput from "../../components/Form/TextInput";
 import Button from "../../components/Button";
-import * as yup from "yup";
+import PhoneInput from "../../components/Form/PhoneInput";
 import { useEffect, useState } from "react";
 import { Contact } from "../../types/auth";
 import { useValidator } from "../../hooks/useValidator";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { authActions } from "../../redux/slices/authSlice";
+import { ICountry } from "country-state-city";
+import * as yup from "yup";
 
 const contactSchema = yup.object({
   contactRole: yup.string().required("Onwership is a required field"),
@@ -92,8 +94,9 @@ export default function UserDetailsForm({ onSubmit, prev }: UserDetailsFormProps
 
       <div className="mt-5">
         <Field label="Phone Number" error={errors.contactNumber}>
-          <TextInput
-            placeholder="+234"
+          <PhoneInput
+            code={(profileData.country as ICountry).phonecode}
+            flag={(profileData.country as ICountry).flag}
             name="contactNumber"
             value={formData.contactNumber}
             onChange={handleInputChange}

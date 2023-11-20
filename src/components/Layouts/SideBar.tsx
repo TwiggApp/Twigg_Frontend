@@ -70,7 +70,7 @@ function Divider() {
 
 export default function SideBar() {
   const dispatch = useAppDispatch();
-  const [activeTab, setActiveTab] = useState("");
+  const [activeTab, setActiveTab] = useState<"" | "profile">("");
   const { user } = useAppSelector((state) => state.auth);
 
   const handleLogout = () => {
@@ -84,7 +84,7 @@ export default function SideBar() {
 
         <Menu>
           <CustomMenuItem
-            component={<Link to="/" />}
+            component={<Link to="/dashboard" />}
             isCollapsed={false}
             icon={<img src={RadixIcon} />}
             active={activeTab === ""}
@@ -95,7 +95,13 @@ export default function SideBar() {
           <CustomMenuItem isCollapsed={false} icon={<img src={MenuIcon} />} active={false}>
             Menus
           </CustomMenuItem>
-          <CustomMenuItem isCollapsed={false} icon={<img src={SettingsIcon} />} active={false}>
+          <CustomMenuItem
+            isCollapsed={false}
+            icon={<img src={SettingsIcon} />}
+            active={activeTab === "profile"}
+            component={<Link to="/dashboard/profile" />}
+            onClick={() => setActiveTab("profile")}
+          >
             Settings
           </CustomMenuItem>
 

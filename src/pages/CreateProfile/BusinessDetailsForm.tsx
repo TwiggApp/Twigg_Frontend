@@ -1,23 +1,27 @@
 import { useEffect, useState } from "react";
 import { useValidator } from "../../hooks/useValidator";
 import { BusinessDetails } from "../../types/auth";
-import Field from "../../components/Form/Field";
-import Dropdown from "../../components/Form/Dropdown";
-import TextInput from "../../components/Form/TextInput";
-import Button from "../../components/Button";
-import * as yup from "yup";
-import { STATES, COUNTRIES } from "../../constants/data";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { authActions } from "../../redux/slices/authSlice";
 import { getBase64FileSize, getBase64Type } from "../../utils/files";
+import { Country, ICountry, State } from "country-state-city";
+import Field from "../../components/Form/Field";
+import Dropdown from "../../components/Form/Dropdown";
+import Button from "../../components/Button";
+import CountrySelect from "../../components/Form/CountrySelect";
+import PhoneInput from "../../components/Form/PhoneInput";
+import * as yup from "yup";
 
 interface BusinessDetailsFormProps {
   onSubmit: () => void;
 }
 
 const businessProfileSchema = yup.object({
-  country: yup.string().required("Country is a required field"),
-  state: yup.string().required("State is a required field"),
+  country: yup.object().test("country", "Country is a required field", (value) => {
+    if (Object.keys(value).length) return true;
+    return false;
+  }),
+  state: yup.string(),
   businessPhoneNumber: yup.string(),
   logo: yup
     .mixed()
@@ -36,6 +40,19 @@ const businessProfileSchema = yup.object({
       const mimeType = getBase64Type(value as string);
       return allowedTypes.includes(`${mimeType}`);
     }),
+  backgroundImage: yup
+    .mixed()
+    .nullable()
+    .test("fileSize", "File size is too large", (value) => {
+      if (!value) return true;
+      return getBase64FileSize(value as string).megabytes <= 5;
+    })
+    .test("fileType", "Invalid file type", (value) => {
+      if (!value) return true;
+      const allowedTypes = ["image/jpeg", "image/png"];
+      const mimeType = getBase64Type(value as string);
+      return allowedTypes.includes(`${mimeType}`);
+    }),
 });
 
 export default function BusinessDetailsForm({ onSubmit }: BusinessDetailsFormProps) {
@@ -47,7 +64,8 @@ export default function BusinessDetailsForm({ onSubmit }: BusinessDetailsFormPro
 
   useEffect(() => {
     setFormData(profileData);
-  }, [profileData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
@@ -65,7 +83,7 @@ export default function BusinessDetailsForm({ onSubmit }: BusinessDetailsFormPro
     }
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | ICountry) => {
     setFormData({ ...formData, [name]: value });
     dispatch(authActions.updateProfileData({ [name]: value }));
     clearErrOnFocus({ target: { name } } as unknown as React.FocusEvent<HTMLInputElement>);
@@ -80,12 +98,12 @@ export default function BusinessDetailsForm({ onSubmit }: BusinessDetailsFormPro
   return (
     <>
       <div className="mt-5">
-        <Field label="Country" error={errors.country}>
-          <Dropdown
+        <Field label="Country" error={errors.country as string}>
+          <CountrySelect
             placeholder="Select your country"
-            dropdownItems={COUNTRIES}
+            dropdownItems={Country.getAllCountries()}
             name="country"
-            value={formData.country}
+            value={formData.country as ICountry}
             onSelect={handleSelectChange}
           />
         </Field>
@@ -97,7 +115,9 @@ export default function BusinessDetailsForm({ onSubmit }: BusinessDetailsFormPro
             name="state"
             value={formData.state}
             placeholder="Select your state"
-            dropdownItems={STATES}
+            dropdownItems={State.getStatesOfCountry((formData?.country as ICountry)?.isoCode).map(
+              (state) => state.name
+            )}
             onSelect={handleSelectChange}
           />
         </Field>
@@ -105,8 +125,9 @@ export default function BusinessDetailsForm({ onSubmit }: BusinessDetailsFormPro
 
       <div className="mt-5">
         <Field label="Business Phone Number" error={errors.businessPhoneNumber}>
-          <TextInput
-            placeholder="+234"
+          <PhoneInput
+            code={(formData?.country as ICountry)?.phonecode}
+            flag={(formData?.country as ICountry)?.flag}
             name="businessPhoneNumber"
             value={formData.businessPhoneNumber}
             onChange={handleInputChange}
@@ -131,6 +152,28 @@ export default function BusinessDetailsForm({ onSubmit }: BusinessDetailsFormPro
             }}
           />
           {errors.logo && <small className="text-red-500">{errors.logo.toString()}</small>}
+        </Field>
+      </div>
+
+      <div className="mt-5">
+        <Field label="Background Image (Optional)">
+          <input
+            type="file"
+            className="font-nunito block"
+            name="backgroundImage"
+            accept=".png,.jpg,.jpeg"
+            onChange={(e) => {
+              handleInputChange(e);
+              if (errors.logo) {
+                clearErrOnFocus({
+                  target: { name: "backgroundImage" },
+                } as unknown as React.FocusEvent<HTMLInputElement>);
+              }
+            }}
+          />
+          {errors.backgroundImage && (
+            <small className="text-red-500">{errors.backgroundImage.toString()}</small>
+          )}
         </Field>
       </div>
 

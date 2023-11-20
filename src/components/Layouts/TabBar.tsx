@@ -76,6 +76,10 @@ export default function TabBar() {
     dispatch(authActions.logout());
   };
 
+  const navigateToProfilePage = () => {
+    navigate("/dashboard/profile");
+  };
+
   return (
     <div className="fixed bottom-0 left-0 w-full h-[82px] bg-white shadow-lg z-50">
       <div className="w-full h-[82px] flex items-center justify-between px-10">
@@ -94,7 +98,7 @@ export default function TabBar() {
         >
           {profileMenuVisible && (
             <div className="absolute -right-4 -top-[190px] flex flex-col justify-evenly h-[162px] w-[214px] rounded-md shadow-lg px-4 z-20 bg-white">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3" onClick={navigateToProfilePage}>
                 <ProfileSvg />
                 <p className="font-nunito text-[16px] text-[#555]">View Profile</p>
               </div>

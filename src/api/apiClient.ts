@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, isAxiosError } from "axios";
 import toast from "react-hot-toast";
-import { useAppDispatch } from "../redux/hooks";
+// import { useAppDispatch } from "../redux/hooks";
+import { useDispatch } from "react-redux";
 import { authActions } from "../redux/slices/authSlice";
 
 export const apiClient: AxiosInstance = axios.create({
@@ -25,7 +26,10 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (isAxiosError(error)) {
-      console.log(error.response?.data);
+      console.log("AXIOS ERROR:", error);
+      // console.log(error.response?.data);
+      // console.log("ERROR RESPONSE:", error.response);
+
       if (error.response?.data?.message === "Vaidation Failure") {
         toast.error(Object.values(error.response?.data?.validationErrors as object)[0], {
           position: "top-right",
@@ -33,11 +37,15 @@ apiClient.interceptors.response.use(
       }
 
       if (error.response?.status === 401) {
+        console.log("\nENTERED HERE:");
         toast.error(error.response?.data.message, { position: "top-right" });
 
-        const dispatch = useAppDispatch();
+        const dispatch = useDispatch();
+        console.log("\nLOGGING USER OUT:");
         dispatch(authActions.logout());
       }
+
+      // if (error.response?.status === )
     }
     return Promise.reject(error);
   }

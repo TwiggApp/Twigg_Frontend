@@ -18,6 +18,8 @@ import Verify from "./pages/Verify";
 import NotFound from "./pages/NotFound";
 import AuthorizedRoute from "./components/AuthorizedRoute";
 import Success from "./pages/Success";
+import Profile from "./pages/Dashboard/Profile";
+import EditBusinessDetails from "./pages/Dashboard/EditBusinessDetails";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -57,7 +59,11 @@ function App() {
                 <Route index element={<Category />} />
                 <Route path=":categoryId" element={<Foods />} />
               </Route>
+              <Route path="profile">
+                <Route index element={<Profile />} />
+              </Route>
             </Route>
+            <Route path="/edit/business-details" element={<EditBusinessDetails />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
