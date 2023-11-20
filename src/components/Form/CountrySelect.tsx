@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { ICountry } from "country-state-city";
 import ArrowDown from "../../assets/arrow-down.svg";
 import ArrowUp from "../../assets/arrow-up.svg";
-import { ICountry } from "country-state-city";
 
 interface CountrySelectProps {
   placeholder?: string;
