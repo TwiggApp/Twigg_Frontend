@@ -4,9 +4,9 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import { Socials } from "../../types/auth";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import * as yup from "yup";
 import { useValidator } from "../../hooks/useValidator";
 import { authActions } from "../../redux/slices/authSlice";
+import * as yup from "yup";
 
 const socialSchema = yup.object({
   whatsapp: yup.string().required("Whatsapp Number is a required field"),

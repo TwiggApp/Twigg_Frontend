@@ -1,30 +1,19 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { apiClient } from "../../api/apiClient";
-import { IBusiness, ICloudinaryFile, IUser, LoginData, RegisterData } from "../../types/auth";
+import {
+  IBusiness,
+  ICloudinaryFile,
+  IUser,
+  LoginData,
+  ProfileData,
+  RegisterData,
+} from "../../types/auth";
 import { base64ToFile } from "../../utils/files";
-import { ICountry } from "country-state-city";
-
-type Role = "owner" | "employee" | "manager" | string;
-
-interface ProfileData {
-  country: ICountry | string;
-  state: string;
-  businessPhoneNumber: string;
-  logo: string | Blob | ICloudinaryFile | null;
-  backgroundImage: string | Blob | ICloudinaryFile | null;
-  contactEmail: string;
-  contactName: string;
-  contactNumber: string;
-  contactRole: Role;
-  instagram: string;
-  tiktok: string;
-  whatsapp: string;
-  facebook: string;
-  details: string;
-}
+import { Country, ICountry } from "country-state-city";
 
 interface AuthState {
   loading: boolean;
+  updating: boolean;
   error: string;
   user: IUser | null;
   token: string;
@@ -35,6 +24,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   loading: false,
+  updating: false,
   error: "",
   user: null,
   token: "",
@@ -125,10 +115,10 @@ const authSlice = createSlice({
           }>
         ) => {
           localStorage.clear();
-          console.log("LOGIN INFO:", action.payload);
 
           const newState: AuthState = {
             loading: false,
+            updating: false,
             user: action.payload.data,
             token: action.payload.accessToken,
             profileComplete: action.payload.data.profileComplete!,
@@ -144,6 +134,29 @@ const authSlice = createSlice({
       )
       .addCase(loginUser.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(getProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getProfile.fulfilled, (state, action: PayloadAction<ProfileData>) => {
+        console.log("\nBUSINESS PROFILE:", action.payload);
+        const country: ICountry | undefined = Country.getAllCountries().find(
+          (country) => country.name === action.payload.country
+        );
+        if (country) action.payload.country = country;
+        state.profileData = action.payload;
+      })
+      .addCase(getProfile.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.updating = true;
+      })
+      .addCase(updateProfile.fulfilled, (state) => {
+        state.updating = false;
+      })
+      .addCase(updateProfile.rejected, (state) => {
+        state.updating = false;
       });
   },
 });
@@ -179,6 +192,25 @@ export const createProfile = createAsyncThunk(
   }
 );
 
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async ({ formData, businessId }: { formData: object; businessId: string }) => {
+    //
+    console.log(formData);
+    const response = await apiClient.put(`/profile/${businessId}`, formData);
+    console.log("PROFILE UPDATED:", response.data);
+    return response.data;
+  }
+);
+
+export const getProfile = createAsyncThunk(
+  "auth/getProfile",
+  async ({ businessId }: { businessId: string }) => {
+    const response = await apiClient.get(`/profile/${businessId}`);
+    return response.data;
+  }
+);
+
 export const registerUser = createAsyncThunk(
   "auth/register",
   async ({ formData }: { formData: RegisterData }) => {
@@ -209,6 +241,8 @@ export const authActions = {
   loginUser,
   verifyToken,
   createProfile,
+  getProfile,
+  updateProfile,
 };
 
 export default authSlice;

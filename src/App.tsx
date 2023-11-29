@@ -20,6 +20,8 @@ import AuthorizedRoute from "./components/AuthorizedRoute";
 import Success from "./pages/Success";
 import Profile from "./pages/Dashboard/Profile";
 import EditBusinessDetails from "./pages/Dashboard/EditBusinessDetails";
+import EditContactDetails from "./pages/Dashboard/EditUserDetails";
+import EditSocials from "./pages/Dashboard/EditSocials";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -61,9 +63,11 @@ function App() {
               </Route>
               <Route path="profile">
                 <Route index element={<Profile />} />
+                <Route path="edit/business-details" element={<EditBusinessDetails />} />
+                <Route path="edit/user-details" element={<EditContactDetails />} />
+                <Route path="edit/socials" element={<EditSocials />} />
               </Route>
             </Route>
-            <Route path="/edit/business-details" element={<EditBusinessDetails />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

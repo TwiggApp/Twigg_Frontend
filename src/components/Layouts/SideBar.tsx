@@ -4,7 +4,7 @@ import RadixIcon from "../../assets/sidebar/radix.svg";
 import MenuIcon from "../../assets/sidebar/menu.svg";
 import SettingsIcon from "../../assets/sidebar/settings.svg";
 import LogoutIcon from "../../assets/sidebar/logout.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { authActions } from "../../redux/slices/authSlice";
@@ -70,8 +70,22 @@ function Divider() {
 
 export default function SideBar() {
   const dispatch = useAppDispatch();
-  const [activeTab, setActiveTab] = useState<"" | "profile">("");
   const { user } = useAppSelector((state) => state.auth);
+  const [activeTab, setActiveTab] = useState<"" | "profile">("");
+
+  useEffect(() => {
+    const { pathname } = window.location;
+    switch (pathname) {
+      case "/dashboard":
+        setActiveTab("");
+        break;
+      case "/dashboard/profile":
+        setActiveTab("profile");
+        break;
+      default:
+        setActiveTab("");
+    }
+  }, []);
 
   const handleLogout = () => {
     dispatch(authActions.logout());

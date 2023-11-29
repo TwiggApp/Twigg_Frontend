@@ -1,16 +1,25 @@
+import { useEffect } from "react";
 import BinSvg from "../../assets/profile/bin.svg";
 import PencilSvg from "../../assets/profile/pencil.svg";
 import Button from "../../components/Button";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
+import { authActions } from "../../redux/slices/authSlice";
 
 function Divider() {
   return <div className="w-full h-[2px] my-12 bg-[#F0F0F0]"></div>;
 }
 
 export default function Profile() {
-  const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { user } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    // if (!user) {
+    dispatch(authActions.getProfile({ businessId: user!._id }));
+    // }
+  }, [dispatch, user]);
 
   return (
     <>
@@ -75,7 +84,7 @@ export default function Profile() {
               Business Details
             </h1>
             <button
-              onClick={() => navigate("/edit/business-details")}
+              onClick={() => navigate("/dashboard/profile/edit/business-details")}
               className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
             >
               <img src={PencilSvg} alt="" />
@@ -120,7 +129,10 @@ export default function Profile() {
             <h1 className="text-primary text-[28px] max-md:text-[22px] font-bold">
               Contact Details
             </h1>
-            <button className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3">
+            <button
+              onClick={() => navigate("/dashboard/profile/edit/user-details")}
+              className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
+            >
               <img src={PencilSvg} alt="" />
               <p className="font-nunito text-[#555]">Edit</p>
             </button>
@@ -156,7 +168,10 @@ export default function Profile() {
         <div>
           <div className="flex flex-row items-center gap-8">
             <h1 className="text-primary text-[28px] max-md:text-[22px] font-bold">Social Media</h1>
-            <button className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3">
+            <button
+              onClick={() => navigate("/dashboard/profile/edit/socials")}
+              className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
+            >
               <img src={PencilSvg} alt="" />
               <p className="font-nunito text-[#555]">Edit</p>
             </button>

@@ -4,6 +4,7 @@ import TextInput from "../../components/Form/TextInput";
 import PhoneInput from "../../components/Form/PhoneInput";
 import Dropdown from "../../components/Form/Dropdown";
 import CountrySelect from "../../components/Form/CountrySelect";
+import BackButton from "../../components/BackButton";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useValidator } from "../../hooks/useValidator";
 import { BusinessDetails } from "../../types/auth";
@@ -15,14 +16,17 @@ import * as yup from "yup";
 const businessProfileSchema = yup.object({
   name: yup.string().required("Business name is required"),
   email: yup.string().email("Email must be a valid email").required("Business email is required"),
-  country: yup.string().required("Country is a required field"),
-  state: yup.string().required("State is a required field"),
+  country: yup.object().test("country", "Country is a required field", (value) => {
+    if (Object.keys(value).length) return true;
+    return false;
+  }),
+  state: yup.string(),
   businessPhoneNumber: yup.string(),
 });
 
 export default function EditBusinessDetails() {
   const dispatch = useAppDispatch();
-  const profileData = useAppSelector((state) => state.auth.profileData);
+  const { profileData, updating, user } = useAppSelector((state) => state.auth);
 
   const [formData, setFormData] =
     useState<Partial<BusinessDetails & { name: string; email: string }>>(profileData);
@@ -48,17 +52,23 @@ export default function EditBusinessDetails() {
     }
   };
 
-  const handleButtonClick = () => {
-    validate();
+  const handleSelectChange = (name: string, value: string | ICountry) => {
+    setFormData({ ...formData, [name]: value });
+    dispatch(authActions.updateProfileData({ [name]: value }));
+    clearErrOnFocus({ target: { name } } as unknown as React.FocusEvent<HTMLInputElement>);
   };
 
-  const handleSelectChange = () => {};
-
-  //   console.log("SELECTED COUNTRY:", formData.country);
+  const handleSubmit = async () => {
+    if (await validate()) {
+      dispatch(authActions.updateProfile({ formData, businessId: user!._id }));
+    }
+  };
 
   return (
     <div className="w-full min-h-screen overflow-y-auto my-4 flex items-center justify-center bg-white">
       <div className="flex flex-col justify-center -translate-y-6">
+        <BackButton />
+
         <div className="min-h-[600px] w-[522px] max-md:w-[95vw] py-8 md:px-10 max-md:px-4 bg-white md:shadow-md rounded-md mt-4">
           <>
             <div className="mt-8">
@@ -125,7 +135,7 @@ export default function EditBusinessDetails() {
             </div>
 
             <div className="mt-10">
-              <Button onClick={handleButtonClick} alternateFont="nunito">
+              <Button onClick={handleSubmit} alternateFont="nunito" loading={updating}>
                 Continue
               </Button>
             </div>

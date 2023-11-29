@@ -1,5 +1,24 @@
 import { ICountry } from "country-state-city";
 
+type Role = "owner" | "employee" | "manager" | string;
+
+export interface ProfileData {
+  country: ICountry | string;
+  state: string;
+  businessPhoneNumber: string;
+  logo: string | Blob | ICloudinaryFile | null;
+  backgroundImage: string | Blob | ICloudinaryFile | null;
+  contactEmail: string;
+  contactName: string;
+  contactNumber: string;
+  contactRole: Role;
+  instagram: string;
+  tiktok: string;
+  whatsapp: string;
+  facebook: string;
+  details: string;
+}
+
 export interface RegisterData {
   name: string;
   email: string;
