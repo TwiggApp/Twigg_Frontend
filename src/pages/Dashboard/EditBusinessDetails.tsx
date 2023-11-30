@@ -60,6 +60,7 @@ export default function EditBusinessDetails() {
 
   const handleSubmit = async () => {
     if (await validate()) {
+      console.log("\nSUBMITTING FORM DATA:", formData);
       dispatch(authActions.updateProfile({ formData, businessId: user!._id }));
     }
   };

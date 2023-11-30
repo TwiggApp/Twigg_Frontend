@@ -10,6 +10,7 @@ import {
 } from "../../types/auth";
 import { base64ToFile } from "../../utils/files";
 import { Country, ICountry } from "country-state-city";
+import { AxiosResponse } from "axios";
 
 interface AuthState {
   loading: boolean;
@@ -30,6 +31,7 @@ const initialState: AuthState = {
   token: "",
   profileComplete: false,
   profileData: {
+    name: "",
     country: {} as ICountry,
     state: "",
     businessPhoneNumber: "",
@@ -145,6 +147,7 @@ const authSlice = createSlice({
         );
         if (country) action.payload.country = country;
         state.profileData = action.payload;
+        state.loading = false;
       })
       .addCase(getProfile.rejected, (state) => {
         state.loading = false;
@@ -157,6 +160,18 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.rejected, (state) => {
         state.updating = false;
+      })
+      .addCase(updateProfileImage.pending, () => {})
+      .addCase(updateProfileImage.fulfilled, (state, action) => {
+        console.log("\nIMAGE UPLOADED:", action.payload);
+        if (action.payload?.logo) {
+          state.profileData.logo = action.payload.logo;
+          state.user!.logo = action.payload.logo;
+        }
+
+        if (action.payload?.backgroundImage) {
+          state.profileData.backgroundImage = action.payload.backgroundImage;
+        }
       });
   },
 });
@@ -168,36 +183,84 @@ export const createProfile = createAsyncThunk(
     const logoFile = base64ToFile((formData as { logo: string }).logo);
     const backgroundImage = base64ToFile((formData as { backgroundImage: string }).backgroundImage);
 
-    const newForm: ProfileData = { ...(formData as ProfileData) };
+    const formToSubmit: ProfileData = { ...(formData as ProfileData) };
 
     if (logoFile) {
       fileData.append("file", logoFile);
       const fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
-      newForm.logo = fileResponse.data;
+      formToSubmit.logo = fileResponse.data;
     }
 
     if (backgroundImage) {
       fileData.append("file", backgroundImage);
       const fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
-      newForm.backgroundImage = fileResponse.data;
+      formToSubmit.backgroundImage = fileResponse.data;
     }
 
-    newForm.contactRole = newForm.contactRole.toLowerCase();
-    newForm.businessPhoneNumber =
-      (newForm.country as ICountry).phonecode + newForm.businessPhoneNumber;
-    newForm.country = (newForm.country as ICountry).name;
+    formToSubmit.contactRole = formToSubmit.contactRole.toLowerCase();
+    formToSubmit.businessPhoneNumber =
+      (formToSubmit.country as ICountry).phonecode + formToSubmit.businessPhoneNumber;
+    formToSubmit.country = (formToSubmit.country as ICountry).name;
 
-    const response = await apiClient.put("/auth/profile", newForm);
+    const response = await apiClient.put("/auth/profile", formToSubmit);
     return response.data;
+  }
+);
+
+// export const uploadProfileBackgroundImage = createAsyncThunk("auth/updateProfileBackgroundImage", async ({formData}: {formData: object}) => {
+//   const fileData = new FormData();
+//   const logoFile = base64ToFile((formData as { logo: string }).logo);
+
+// })
+
+export const updateProfileImage = createAsyncThunk(
+  "auth/updateProfileLogo",
+  async ({
+    formData,
+  }: {
+    formData: { [key: string]: string | ArrayBuffer | null | undefined };
+  }) => {
+    const fileData = new FormData();
+
+    let fileResponse: AxiosResponse<ICloudinaryFile> | null = null;
+
+    if (formData["logo"]) {
+      const logoFile = base64ToFile(formData["logo"] as string) as File;
+      fileData.append("file", logoFile);
+      fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
+      return { logo: fileResponse.data };
+    }
+
+    if (formData["backgroundImage"]) {
+      const backgroudnImage = base64ToFile(formData["backgroundImage"] as string) as File;
+      fileData.append("file", backgroudnImage);
+      fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
+      return { backgroundImage: fileResponse.data };
+    }
   }
 );
 
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async ({ formData, businessId }: { formData: object; businessId: string }) => {
-    //
-    console.log(formData);
-    const response = await apiClient.put(`/profile/${businessId}`, formData);
+    const formToSubmit: ProfileData = { ...(formData as ProfileData) };
+
+    console.log("\nFORM TO SUBMIT:", formToSubmit);
+
+    if (formToSubmit.contactRole) {
+      formToSubmit.contactRole = formToSubmit.contactRole.toLowerCase();
+    }
+
+    if (formToSubmit.businessPhoneNumber) {
+      formToSubmit.businessPhoneNumber =
+        (formToSubmit.country as ICountry).phonecode + formToSubmit.businessPhoneNumber;
+    }
+
+    if (formToSubmit.country) {
+      formToSubmit.country = (formToSubmit.country as ICountry).name;
+    }
+
+    const response = await apiClient.put(`/profile/${businessId}`, formToSubmit);
     console.log("PROFILE UPDATED:", response.data);
     return response.data;
   }
@@ -243,6 +306,7 @@ export const authActions = {
   createProfile,
   getProfile,
   updateProfile,
+  updateProfileImage,
 };
 
 export default authSlice;

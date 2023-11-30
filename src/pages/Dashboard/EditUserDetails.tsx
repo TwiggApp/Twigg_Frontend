@@ -26,9 +26,6 @@ export default function EditUserDetails() {
   const dispatch = useAppDispatch();
   const { profileData, updating, user } = useAppSelector((state) => state.auth);
 
-  console.log("\nPROFILE DATA:", profileData);
-  console.log("\nUSER:", user);
-
   const [formData, setFormData] = useState<Partial<Contact>>(profileData);
 
   useEffect(() => {

@@ -49,6 +49,8 @@ function AxiosInterceptor({ children }: AxiosInterceptorProps) {
         error.message = message;
       }
 
+      toast.error(error.message, { position: "top-right" });
+
       const currentPath = window.location.pathname;
       if (error.response?.status === 401 && !currentPath.includes("login")) {
         toast.error(message, { position: "top-right" });

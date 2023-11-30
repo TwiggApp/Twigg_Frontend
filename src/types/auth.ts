@@ -3,6 +3,8 @@ import { ICountry } from "country-state-city";
 type Role = "owner" | "employee" | "manager" | string;
 
 export interface ProfileData {
+  name?: string;
+  email?: string;
   country: ICountry | string;
   state: string;
   businessPhoneNumber: string;
