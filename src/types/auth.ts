@@ -2,6 +2,22 @@ import { ICountry } from "country-state-city";
 
 type Role = "owner" | "employee" | "manager" | string;
 
+export interface AuthState {
+  loading: boolean;
+  updating: boolean;
+  error: string;
+  user: IUser | null;
+  token: string;
+  profileData: ProfileData;
+  isAuthenticated: boolean;
+  profileComplete: boolean;
+}
+
+export interface IProfile {
+  business: ProfileData;
+  contact: { name: string; number: string; role: Role; email: string; _id: string }[];
+}
+
 export interface ProfileData {
   name?: string;
   email?: string;

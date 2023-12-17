@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import BinSvg from "../../assets/profile/bin.svg";
 import PencilSvg from "../../assets/profile/pencil.svg";
 import EmptyPng from "../../assets/dashboard/empty.png";
 import Loader from "../../components/Loader";
+import { MoonLoader } from "react-spinners";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { authActions } from "../../redux/slices/authSlice";
@@ -16,7 +17,8 @@ function Divider() {
 export default function Profile() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { user, profileData, loading } = useAppSelector((state) => state.auth);
+  const { user, profileData, loading, updating } = useAppSelector((state) => state.auth);
+  const [updateType, setUpdateType] = useState<"logo" | "bg">("logo");
 
   console.log("\nUSER:", user);
   console.log("\nPROFILE DATA:", profileData);
@@ -31,13 +33,24 @@ export default function Profile() {
     e: React.ChangeEvent<HTMLInputElement>,
     field: "backgroundImage" | "logo"
   ) => {
-    const { type, files } = e.target;
+    const { name, type, files } = e.target;
+
+    if (name === "backgroundImage") {
+      setUpdateType("bg");
+    } else {
+      setUpdateType("logo");
+    }
 
     if (type === "file" && files) {
       const reader = new FileReader();
       reader.onload = (event) => {
         dispatch(authActions.updateProfileData({ [field]: event.target?.result }));
-        dispatch(authActions.updateProfileImage({ formData: { [field]: event.target?.result } }));
+        dispatch(
+          authActions.updateProfileImage({
+            formData: { [field]: event.target?.result },
+            businessId: user!._id,
+          })
+        );
       };
       reader.readAsDataURL(files[0]);
     }
@@ -72,7 +85,11 @@ export default function Profile() {
                 htmlFor="logo"
                 className="h-[40px] w-[110px] bg-primary flex items-center justify-center rounded-md cursor-pointer text-white"
               >
-                Upload new
+                {updating && updateType === "logo" ? (
+                  <MoonLoader size={20} color="white" loading={updating} />
+                ) : (
+                  "Upload new"
+                )}
                 <input
                   type="file"
                   name="logo"
@@ -111,14 +128,18 @@ export default function Profile() {
             </div>
             <div className="flex gap-2">
               <label
-                htmlFor="logo"
+                htmlFor="backgroundImage"
                 className="h-[40px] w-[110px] bg-primary flex items-center justify-center rounded-md cursor-pointer text-white"
               >
-                Upload new
+                {updating && updateType === "bg" ? (
+                  <MoonLoader color="white" loading={true} size={20} />
+                ) : (
+                  "Upload new"
+                )}
                 <input
                   type="file"
-                  name="logo"
-                  id="logo"
+                  name="backgroundImage"
+                  id="backgroundImage"
                   accept=".png,.jpg,.jpeg"
                   className="hidden"
                   onChange={(e) => {
@@ -126,11 +147,11 @@ export default function Profile() {
                   }}
                 />
               </label>
-
+              {/* 
               <button className="flex items-center justify-center bg-[#F0F0F0] text-[#999] w-[180px] h-[42px] gap-2 rounded-md">
                 <img src={BinSvg} alt="waste-bin" />
                 <p>Remove photo</p>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -139,136 +160,141 @@ export default function Profile() {
         <Divider />
 
         {/* Business Details */}
-        <div>
-          <div className="flex flex-row items-center gap-8">
-            <h1 className="text-primary text-[28px] max-md:text-[22px] font-bold">
-              Business Details
-            </h1>
-            <button
-              onClick={() => navigate("/dashboard/profile/edit/business-details")}
-              className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
-            >
-              <img src={PencilSvg} alt="" />
-              <p className="font-nunito text-[#555]">Edit</p>
-            </button>
+
+        {!!Object.keys(profileData).length && (
+          <div>
+            <div className="flex flex-row items-center gap-8">
+              <h1 className="text-primary text-[28px] max-md:text-[22px] font-bold">
+                Business Details
+              </h1>
+              <button
+                onClick={() => navigate("/dashboard/profile/edit/business-details")}
+                className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
+              >
+                <img src={PencilSvg} alt="" />
+                <p className="font-nunito text-[#555]">Edit</p>
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-12 max-w-[700px] mt-6">
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Business Name</p>
+                <p className="font-nunito">{profileData?.name}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Business Email</p>
+                <p className="font-nunito">{profileData?.email}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Country</p>
+                <p className="font-nunito">
+                  {typeof profileData.country === "string"
+                    ? profileData.country
+                    : (profileData.country as ICountry).name}
+                </p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">State</p>
+                <p className="font-nunito">{profileData?.state}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Business Phone Number</p>
+                <p className="font-nunito">{profileData?.businessPhoneNumber}</p>
+              </div>
+            </div>
           </div>
-
-          <div className="flex flex-wrap gap-12 max-w-[700px] mt-6">
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Business Name</p>
-              <p className="font-nunito">{profileData?.name}</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Business Email</p>
-              <p className="font-nunito">{profileData?.email}</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Country</p>
-              <p className="font-nunito">
-                {typeof profileData.country === "string"
-                  ? profileData.country
-                  : (profileData.country as ICountry).name}
-              </p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">State</p>
-              <p className="font-nunito">{profileData?.state}</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Business Phone Number</p>
-              <p className="font-nunito">{profileData?.businessPhoneNumber}</p>
-            </div>
-          </div>
-        </div>
-
+        )}
         {/* Divider */}
         <Divider />
 
         {/* Contact Details */}
-        <div>
-          <div className="flex flex-row items-center gap-8">
-            <h1 className="text-primary text-[28px] max-md:text-[22px] font-bold">
-              Contact Details
-            </h1>
-            <button
-              onClick={() => navigate("/dashboard/profile/edit/user-details")}
-              className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
-            >
-              <img src={PencilSvg} alt="" />
-              <p className="font-nunito text-[#555]">Edit</p>
-            </button>
+        {!!Object.keys(profileData).length && (
+          <div>
+            <div className="flex flex-row items-center gap-8">
+              <h1 className="text-primary text-[28px] max-md:text-[22px] font-bold">
+                Contact Details
+              </h1>
+              <button
+                onClick={() => navigate("/dashboard/profile/edit/user-details")}
+                className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
+              >
+                <img src={PencilSvg} alt="" />
+                <p className="font-nunito text-[#555]">Edit</p>
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-12 max-w-[700px] mt-6">
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Ownership</p>
+                <p className="font-nunito">{profileData?.contactRole}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Full Name</p>
+                <p className="font-nunito">{profileData?.contactName}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Email Address</p>
+                <p className="font-nunito">{profileData?.contactEmail}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Phone Number</p>
+                <p className="font-nunito">
+                  {profileData?.contactNumber && `${profileData.contactNumber}`}
+                </p>
+              </div>
+            </div>
           </div>
-
-          <div className="flex flex-wrap gap-12 max-w-[700px] mt-6">
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Ownership</p>
-              <p className="font-nunito">Owner</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Full Name</p>
-              <p className="font-nunito">{profileData?.name}</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Email Address</p>
-              <p className="font-nunito">{profileData?.email}</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Phone Number</p>
-              <p className="font-nunito">
-                {profileData?.businessPhoneNumber &&
-                  `${(profileData.country as ICountry).phonecode} ${
-                    profileData.businessPhoneNumber
-                  }`}
-              </p>
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* Divider */}
         <Divider />
 
         {/* Social Media */}
-        <div>
-          <div className="flex flex-row items-center gap-8">
-            <h1 className="text-primary text-[28px] max-md:text-[22px] font-bold">Social Media</h1>
-            <button
-              onClick={() => navigate("/dashboard/profile/edit/socials")}
-              className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
-            >
-              <img src={PencilSvg} alt="" />
-              <p className="font-nunito text-[#555]">Edit</p>
-            </button>
+        {!!Object.keys(profileData).length && (
+          <div>
+            <div className="flex flex-row items-center gap-8">
+              <h1 className="text-primary text-[28px] max-md:text-[22px] font-bold">
+                Social Media
+              </h1>
+              <button
+                onClick={() => navigate("/dashboard/profile/edit/socials")}
+                className="flex w-[98px] h-[40px] border border-[#DBDBDB] rounded-full items-center justify-center gap-3"
+              >
+                <img src={PencilSvg} alt="" />
+                <p className="font-nunito text-[#555]">Edit</p>
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-10 max-w-[700px] mt-6">
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Instagram Handle</p>
+                <p className="font-nunito ">{profileData?.instagram}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">WhatsApp Number</p>
+                <p className="font-nunito">{profileData?.whatsapp}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">TikTok Handle</p>
+                <p className="font-nunito">{profileData?.tiktok}</p>
+              </div>
+
+              <div className="min-w-[180px] p-2">
+                <p className="font-nunito text-[#555] mb-2">Facebook Handle</p>
+                <p className="font-nunito">{profileData?.facebook}</p>
+              </div>
+            </div>
           </div>
-
-          <div className="flex flex-wrap gap-10 max-w-[700px] mt-6">
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Instagram Handle</p>
-              <p className="font-nunito ">{user?.instagram}</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">WhatsApp Number</p>
-              <p className="font-nunito">{user?.whatsapp}</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">TikTok Handle</p>
-              <p className="font-nunito">{user?.tiktok}</p>
-            </div>
-
-            <div className="min-w-[180px] p-2">
-              <p className="font-nunito text-[#555] mb-2">Facebook Handle</p>
-              <p className="font-nunito">{user?.facebook}</p>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </>
   );

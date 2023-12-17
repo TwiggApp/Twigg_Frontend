@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { apiClient } from "../../api/apiClient";
 import { ICategoryFood, IFood } from "../../types/menu";
-import { IBusiness, ICloudinaryFile } from "../../types/auth";
+import { ICloudinaryFile, IProfile } from "../../types/auth";
 import Loader from "../../components/Loader";
 import RestaurantSvg from "../../assets/foods/pasta.svg";
 import BusinessPage from "./BusinessPage";
@@ -30,7 +30,7 @@ export default function Home() {
   const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
 
   const [loading, setLoading] = useState(true);
-  const [business, setBusiness] = useState<IBusiness | null>(null);
+  const [business, setBusiness] = useState<IProfile | null>(null);
   const [businessPage, setBusinessPage] = useState(true);
   const [categories, setCategories] = useState<string[]>([]);
   const [foods, setFoods] = useState<ICategoryFood[]>([]);
@@ -41,9 +41,12 @@ export default function Home() {
     (async () => {
       try {
         const [businessResponse, foodItemResponse] = await Promise.all([
-          apiClient.get<IBusiness>(`/profile/${params.get("business")}`),
+          apiClient.get<IProfile>(`/profile/${params.get("business")}`),
           apiClient.get<ICategoryFood[]>(`/item/all${location.search}`),
         ]);
+
+        console.log("\nBUSINESS RESPONSE:", businessResponse);
+        console.log("FOOD RESPONSE:", foodItemResponse);
 
         if (businessResponse.data && foodItemResponse.data) {
           setBusiness(businessResponse.data);
@@ -135,7 +138,15 @@ export default function Home() {
       </div>
 
       <div className="h-[186px] w-screen overflow-hidden">
-        <img src={RestaurantSvg} alt="menu image" className="w-full h-full object-cover" />
+        <img
+          src={
+            business?.business.backgroundImage
+              ? (business.business.backgroundImage as ICloudinaryFile).secure_url
+              : RestaurantSvg
+          }
+          alt="menu image"
+          className="w-full h-full object-cover"
+        />
       </div>
 
       {/* Horizontal scroll menu */}

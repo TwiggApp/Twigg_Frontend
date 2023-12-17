@@ -151,7 +151,13 @@ export default function Foods() {
               {location.state.category}
             </h1>
 
-            <AddButton text="Add Food Item" onClick={() => setModalVisible(true)} />
+            <AddButton
+              text="Add Food Item"
+              onClick={() => {
+                setFormData({ name: "", price: "", images: [], image: "" });
+                setModalVisible(true);
+              }}
+            />
           </div>
 
           <div className="flex flex-wrap mt-10 gap-6 max-md:flex-col">
@@ -168,6 +174,15 @@ export default function Foods() {
                     key={`menu-item-${index}`}
                     menuItem={menu}
                     onClick={() => handleMenuItemClick(food.name)}
+                    onEditClick={() => {
+                      setFormData({
+                        name: menu.name,
+                        image: menu.image,
+                        price: food.price,
+                        images: food.images,
+                      });
+                      setModalVisible(true);
+                    }}
                   />
                 );
               })}

@@ -129,7 +129,7 @@ export default function Category() {
       <div className="flex flex-col h-[100vh]">
         <TopBar />
 
-        <div className="flex flex-col w-[100%] h-full px-16 max-md:px-6 py-6">
+        <div className="flex flex-col w-[100%] h-[100%] px-16 max-md:px-6 py-6">
           <div className="flex flex-row h-[45px] w-[100%] items-center justify-between">
             <h1 className="text-primary text-[32px] max-md:text-[26px] font-bold">Categories</h1>
 
@@ -149,6 +149,10 @@ export default function Category() {
                     key={`menu-item-${index}`}
                     menuItem={menu}
                     onClick={() => handleMenuItemClick(category.name, category._id!)}
+                    onEditClick={() => {
+                      setFormData({ _id: category._id, name: menu.name, image: menu.image });
+                      setModalVisible(true);
+                    }}
                   />
                 );
               })}

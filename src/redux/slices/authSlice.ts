@@ -7,21 +7,12 @@ import {
   LoginData,
   ProfileData,
   RegisterData,
+  AuthState,
+  IProfile,
 } from "../../types/auth";
 import { base64ToFile } from "../../utils/files";
 import { Country, ICountry } from "country-state-city";
 import { AxiosResponse } from "axios";
-
-interface AuthState {
-  loading: boolean;
-  updating: boolean;
-  error: string;
-  user: IUser | null;
-  token: string;
-  profileData: ProfileData;
-  isAuthenticated: boolean;
-  profileComplete: boolean;
-}
 
 const initialState: AuthState = {
   loading: false,
@@ -140,13 +131,18 @@ const authSlice = createSlice({
       .addCase(getProfile.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getProfile.fulfilled, (state, action: PayloadAction<ProfileData>) => {
-        console.log("\nBUSINESS PROFILE:", action.payload);
+      .addCase(getProfile.fulfilled, (state, action: PayloadAction<IProfile>) => {
         const country: ICountry | undefined = Country.getAllCountries().find(
-          (country) => country.name === action.payload.country
+          (country) => country.name === action.payload.business?.country
         );
-        if (country) action.payload.country = country;
-        state.profileData = action.payload;
+        if (country) action.payload.business.country = country;
+
+        state.profileData = { ...action.payload.business };
+        state.profileData.contactName = action.payload.contact[0]?.name;
+        state.profileData.contactEmail = action.payload.contact[0]?.email;
+        state.profileData.contactNumber = action.payload.contact[0]?.number;
+        state.profileData.contactRole = action.payload.contact[0]?.role;
+
         state.loading = false;
       })
       .addCase(getProfile.rejected, (state) => {
@@ -161,9 +157,10 @@ const authSlice = createSlice({
       .addCase(updateProfile.rejected, (state) => {
         state.updating = false;
       })
-      .addCase(updateProfileImage.pending, () => {})
+      .addCase(updateProfileImage.pending, (state) => {
+        state.updating = true;
+      })
       .addCase(updateProfileImage.fulfilled, (state, action) => {
-        console.log("\nIMAGE UPLOADED:", action.payload);
         if (action.payload?.logo) {
           state.profileData.logo = action.payload.logo;
           state.user!.logo = action.payload.logo;
@@ -172,6 +169,11 @@ const authSlice = createSlice({
         if (action.payload?.backgroundImage) {
           state.profileData.backgroundImage = action.payload.backgroundImage;
         }
+
+        state.updating = false;
+      })
+      .addCase(updateProfileImage.rejected, (state) => {
+        state.updating = false;
       });
   },
 });
@@ -207,18 +209,14 @@ export const createProfile = createAsyncThunk(
   }
 );
 
-// export const uploadProfileBackgroundImage = createAsyncThunk("auth/updateProfileBackgroundImage", async ({formData}: {formData: object}) => {
-//   const fileData = new FormData();
-//   const logoFile = base64ToFile((formData as { logo: string }).logo);
-
-// })
-
 export const updateProfileImage = createAsyncThunk(
   "auth/updateProfileLogo",
   async ({
     formData,
+    businessId,
   }: {
     formData: { [key: string]: string | ArrayBuffer | null | undefined };
+    businessId: string;
   }) => {
     const fileData = new FormData();
 
@@ -228,13 +226,22 @@ export const updateProfileImage = createAsyncThunk(
       const logoFile = base64ToFile(formData["logo"] as string) as File;
       fileData.append("file", logoFile);
       fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
+
+      if (fileResponse) {
+        await apiClient.put(`/profile/${businessId}`, { logo: fileResponse.data });
+      }
+
       return { logo: fileResponse.data };
     }
 
     if (formData["backgroundImage"]) {
-      const backgroudnImage = base64ToFile(formData["backgroundImage"] as string) as File;
-      fileData.append("file", backgroudnImage);
+      const backgroundImage = base64ToFile(formData["backgroundImage"] as string) as File;
+      fileData.append("file", backgroundImage);
       fileResponse = await apiClient.post<ICloudinaryFile>("/file", fileData);
+
+      if (fileResponse) {
+        await apiClient.put(`/profile/${businessId}`, { backgroundImage: fileResponse.data });
+      }
       return { backgroundImage: fileResponse.data };
     }
   }
@@ -244,8 +251,6 @@ export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async ({ formData, businessId }: { formData: object; businessId: string }) => {
     const formToSubmit: ProfileData = { ...(formData as ProfileData) };
-
-    console.log("\nFORM TO SUBMIT:", formToSubmit);
 
     if (formToSubmit.contactRole) {
       formToSubmit.contactRole = formToSubmit.contactRole.toLowerCase();
