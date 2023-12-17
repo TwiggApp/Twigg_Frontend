@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import BinSvg from "../../assets/profile/bin.svg";
 import PencilSvg from "../../assets/profile/pencil.svg";
 import EmptyPng from "../../assets/dashboard/empty.png";
 import Loader from "../../components/Loader";
